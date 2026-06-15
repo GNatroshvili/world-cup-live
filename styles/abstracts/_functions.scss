@@ -1,0 +1,18 @@
+@use "sass:map";
+@use "variables" as *;
+
+// Resolve a z-index from the layering scale.
+@function z($layer) {
+  @if not map.has-key($z-layers, $layer) {
+    @error "Unknown z-layer `#{$layer}`. Available: #{map.keys($z-layers)}.";
+  }
+  @return map.get($z-layers, $layer);
+}
+
+// Resolve a breakpoint value (px) from the scale.
+@function bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Unknown breakpoint `#{$name}`. Available: #{map.keys($breakpoints)}.";
+  }
+  @return map.get($breakpoints, $name);
+}

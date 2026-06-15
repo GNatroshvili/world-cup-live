@@ -1,0 +1,23 @@
+@use "abstracts" as *;
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 210, 76, 0.28);
+  background: rgba(255, 210, 76, 0.08);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 210, 76, 0.18);
+}

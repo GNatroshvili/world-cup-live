@@ -1,0 +1,29 @@
+@use "abstracts" as *;
+
+.row {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.empty {
+  color: var(--text-dim);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #04130d;
+}
+
+.W { background: var(--win); }
+.D { background: var(--draw); }
+.L {
+  background: var(--loss);
+  color: #fff;
+}

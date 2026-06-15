@@ -1,0 +1,95 @@
+@use "abstracts" as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 240px;
+  max-width: 360px;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  input {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    &::placeholder {
+      color: var(--text-dim);
+    }
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chip {
+  min-width: 34px;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  transition: all var(--ease-fast);
+  @include clickable;
+
+  &:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+}
+
+.chipActive {
+  color: var(--text-on-accent);
+  background: var(--gradient-primary);
+  border-color: transparent;
+}
+
+.count {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include respond("md") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @include respond("xl") {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

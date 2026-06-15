@@ -1,0 +1,30 @@
+// =============================================================================
+// Compile-time design tokens (SCSS)
+// Runtime/theme tokens live as CSS custom properties in base/_root.scss.
+// These maps are only used by mixins/functions at build time.
+// =============================================================================
+
+// Responsive breakpoints (mobile-first min-widths).
+$breakpoints: (
+  "xs": 360px,
+  "sm": 480px,
+  "md": 768px,
+  "lg": 1024px,
+  "xl": 1280px,
+  "2xl": 1536px,
+  "3xl": 1920px,
+);
+
+// Layering scale.
+$z-layers: (
+  "base": 0,
+  "raised": 10,
+  "sticky": 100,
+  "header": 200,
+  "overlay": 900,
+  "modal": 1000,
+  "toast": 1100,
+);
+
+// Maximum content width for centered containers.
+$container-max: 1640px;

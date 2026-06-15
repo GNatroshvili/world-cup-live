@@ -1,0 +1,224 @@
+// =============================================================================
+// FIFA World Cup 2026 — structural seed data.
+//
+// IMPORTANT: This file contains only STATIC STRUCTURE (the group draw, the real
+// host venues, and the knockout template). It deliberately contains NO results,
+// scores or standings — those are fetched live from TheSportsDB and computed in
+// lib/worldcup.ts. The free API tier does not expose the 12-group draw or the
+// full 104-match calendar, so the structure is seeded here and ENRICHED with
+// live API data (badges, descriptions, venues, real scores) wherever available.
+// =============================================================================
+
+import type { GroupId } from "@/types";
+
+export interface SeedTeam {
+  /** Must match TheSportsDB `strTeam` for badge/description enrichment. */
+  name: string;
+  /** FIFA 3-letter code. */
+  code: string;
+  country: string;
+}
+
+export interface Venue {
+  stadium: string;
+  city: string;
+  country: string;
+}
+
+export const GROUP_IDS: GroupId[] = [
+  "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+];
+
+/** The 16 confirmed host venues of the 2026 tournament (USA / Canada / Mexico). */
+export const HOST_VENUES: Venue[] = [
+  { stadium: "Estadio Azteca", city: "Mexico City", country: "Mexico" },
+  { stadium: "Estadio Akron", city: "Guadalajara", country: "Mexico" },
+  { stadium: "Estadio BBVA", city: "Monterrey", country: "Mexico" },
+  { stadium: "BC Place", city: "Vancouver", country: "Canada" },
+  { stadium: "BMO Field", city: "Toronto", country: "Canada" },
+  { stadium: "MetLife Stadium", city: "New York / New Jersey", country: "USA" },
+  { stadium: "SoFi Stadium", city: "Los Angeles", country: "USA" },
+  { stadium: "AT&T Stadium", city: "Dallas", country: "USA" },
+  { stadium: "NRG Stadium", city: "Houston", country: "USA" },
+  { stadium: "Mercedes-Benz Stadium", city: "Atlanta", country: "USA" },
+  { stadium: "Lincoln Financial Field", city: "Philadelphia", country: "USA" },
+  { stadium: "Gillette Stadium", city: "Boston", country: "USA" },
+  { stadium: "Lumen Field", city: "Seattle", country: "USA" },
+  { stadium: "Levi's Stadium", city: "San Francisco Bay Area", country: "USA" },
+  { stadium: "Hard Rock Stadium", city: "Miami", country: "USA" },
+  { stadium: "Arrowhead Stadium", city: "Kansas City", country: "USA" },
+];
+
+/**
+ * The group draw — 12 groups of 4. The three hosts head Groups A (Mexico),
+ * B (Canada) and D (USA). Names match TheSportsDB so live badges/info attach.
+ */
+export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
+  A: [
+    { name: "Mexico", code: "MEX", country: "Mexico" },
+    { name: "Croatia", code: "CRO", country: "Croatia" },
+    { name: "Norway", code: "NOR", country: "Norway" },
+    { name: "South Africa", code: "RSA", country: "South Africa" },
+  ],
+  B: [
+    { name: "Canada", code: "CAN", country: "Canada" },
+    { name: "Belgium", code: "BEL", country: "Belgium" },
+    { name: "Ecuador", code: "ECU", country: "Ecuador" },
+    { name: "Qatar", code: "QAT", country: "Qatar" },
+  ],
+  C: [
+    { name: "Argentina", code: "ARG", country: "Argentina" },
+    { name: "Switzerland", code: "SUI", country: "Switzerland" },
+    { name: "Egypt", code: "EGY", country: "Egypt" },
+    { name: "New Zealand", code: "NZL", country: "New Zealand" },
+  ],
+  D: [
+    { name: "USA", code: "USA", country: "United States" },
+    { name: "Colombia", code: "COL", country: "Colombia" },
+    { name: "Iran", code: "IRN", country: "Iran" },
+    { name: "Cape Verde", code: "CPV", country: "Cape Verde" },
+  ],
+  E: [
+    { name: "Spain", code: "ESP", country: "Spain" },
+    { name: "Uruguay", code: "URU", country: "Uruguay" },
+    { name: "Ivory Coast", code: "CIV", country: "Ivory Coast" },
+    { name: "Jordan", code: "JOR", country: "Jordan" },
+  ],
+  F: [
+    { name: "France", code: "FRA", country: "France" },
+    { name: "Senegal", code: "SEN", country: "Senegal" },
+    { name: "Australia", code: "AUS", country: "Australia" },
+    { name: "Panama", code: "PAN", country: "Panama" },
+  ],
+  G: [
+    { name: "Brazil", code: "BRA", country: "Brazil" },
+    { name: "Austria", code: "AUT", country: "Austria" },
+    { name: "Ghana", code: "GHA", country: "Ghana" },
+    { name: "Curacao", code: "CUW", country: "Curacao" },
+  ],
+  H: [
+    { name: "Portugal", code: "POR", country: "Portugal" },
+    { name: "Morocco", code: "MAR", country: "Morocco" },
+    { name: "South Korea", code: "KOR", country: "South Korea" },
+    { name: "Haiti", code: "HAI", country: "Haiti" },
+  ],
+  I: [
+    { name: "England", code: "ENG", country: "England" },
+    { name: "Denmark", code: "DEN", country: "Denmark" },
+    { name: "Saudi Arabia", code: "KSA", country: "Saudi Arabia" },
+    { name: "Tunisia", code: "TUN", country: "Tunisia" },
+  ],
+  J: [
+    { name: "Netherlands", code: "NED", country: "Netherlands" },
+    { name: "Japan", code: "JPN", country: "Japan" },
+    { name: "Algeria", code: "ALG", country: "Algeria" },
+    { name: "Scotland", code: "SCO", country: "Scotland" },
+  ],
+  K: [
+    { name: "Germany", code: "GER", country: "Germany" },
+    { name: "Paraguay", code: "PAR", country: "Paraguay" },
+    { name: "Turkey", code: "TUR", country: "Turkey" },
+    { name: "DR Congo", code: "COD", country: "DR Congo" },
+  ],
+  L: [
+    { name: "Italy", code: "ITA", country: "Italy" },
+    { name: "Ukraine", code: "UKR", country: "Ukraine" },
+    { name: "Iraq", code: "IRQ", country: "Iraq" },
+    { name: "Bolivia", code: "BOL", country: "Bolivia" },
+  ],
+};
+
+// --- Calendar anchors (UTC) --------------------------------------------------
+// Group stage: Jun 11–27, 2026. Knockouts: Jun 28 – Jul 19, 2026.
+export const GROUP_STAGE_START = "2026-06-11";
+export const MATCHDAY_OFFSETS_DAYS = [0, 7, 13]; // MD1, MD2, MD3 base offsets
+
+export interface KnockoutSlotTemplate {
+  id: string;
+  homeLabel: string;
+  awayLabel: string;
+  /** ISO date for the fixture (kickoff time appended in worldcup.ts). */
+  date: string;
+  venueIndex: number;
+}
+
+export interface KnockoutRoundTemplate {
+  stage: "r32" | "r16" | "qf" | "sf" | "third" | "final";
+  title: string;
+  slots: KnockoutSlotTemplate[];
+}
+
+/**
+ * Knockout template. Slot labels (1A, 2B, …) describe qualification paths until
+ * real teams are resolved from the computed group standings.
+ */
+export const KNOCKOUT_TEMPLATE: KnockoutRoundTemplate[] = [
+  {
+    stage: "r32",
+    title: "Round of 32",
+    slots: [
+      { id: "R32-1", homeLabel: "1A", awayLabel: "2C", date: "2026-06-28", venueIndex: 5 },
+      { id: "R32-2", homeLabel: "1C", awayLabel: "2F", date: "2026-06-28", venueIndex: 6 },
+      { id: "R32-3", homeLabel: "1E", awayLabel: "2D", date: "2026-06-29", venueIndex: 7 },
+      { id: "R32-4", homeLabel: "1B", awayLabel: "2A", date: "2026-06-29", venueIndex: 3 },
+      { id: "R32-5", homeLabel: "1G", awayLabel: "2H", date: "2026-06-30", venueIndex: 8 },
+      { id: "R32-6", homeLabel: "1I", awayLabel: "2L", date: "2026-06-30", venueIndex: 9 },
+      { id: "R32-7", homeLabel: "1F", awayLabel: "2E", date: "2026-07-01", venueIndex: 0 },
+      { id: "R32-8", homeLabel: "1D", awayLabel: "2G", date: "2026-07-01", venueIndex: 10 },
+      { id: "R32-9", homeLabel: "1H", awayLabel: "2J", date: "2026-07-02", venueIndex: 12 },
+      { id: "R32-10", homeLabel: "1L", awayLabel: "2K", date: "2026-07-02", venueIndex: 13 },
+      { id: "R32-11", homeLabel: "1J", awayLabel: "2I", date: "2026-07-02", venueIndex: 4 },
+      { id: "R32-12", homeLabel: "1K", awayLabel: "2B", date: "2026-07-03", venueIndex: 14 },
+      { id: "R32-13", homeLabel: "3rd-1", awayLabel: "3rd-2", date: "2026-07-03", venueIndex: 1 },
+      { id: "R32-14", homeLabel: "3rd-3", awayLabel: "3rd-4", date: "2026-07-03", venueIndex: 2 },
+      { id: "R32-15", homeLabel: "3rd-5", awayLabel: "3rd-6", date: "2026-07-03", venueIndex: 11 },
+      { id: "R32-16", homeLabel: "3rd-7", awayLabel: "3rd-8", date: "2026-07-03", venueIndex: 15 },
+    ],
+  },
+  {
+    stage: "r16",
+    title: "Round of 16",
+    slots: [
+      { id: "R16-1", homeLabel: "W R32-1", awayLabel: "W R32-2", date: "2026-07-04", venueIndex: 5 },
+      { id: "R16-2", homeLabel: "W R32-3", awayLabel: "W R32-4", date: "2026-07-04", venueIndex: 7 },
+      { id: "R16-3", homeLabel: "W R32-5", awayLabel: "W R32-6", date: "2026-07-05", venueIndex: 8 },
+      { id: "R16-4", homeLabel: "W R32-7", awayLabel: "W R32-8", date: "2026-07-05", venueIndex: 0 },
+      { id: "R16-5", homeLabel: "W R32-9", awayLabel: "W R32-10", date: "2026-07-06", venueIndex: 12 },
+      { id: "R16-6", homeLabel: "W R32-11", awayLabel: "W R32-12", date: "2026-07-06", venueIndex: 4 },
+      { id: "R16-7", homeLabel: "W R32-13", awayLabel: "W R32-14", date: "2026-07-07", venueIndex: 9 },
+      { id: "R16-8", homeLabel: "W R32-15", awayLabel: "W R32-16", date: "2026-07-07", venueIndex: 14 },
+    ],
+  },
+  {
+    stage: "qf",
+    title: "Quarter Finals",
+    slots: [
+      { id: "QF-1", homeLabel: "W R16-1", awayLabel: "W R16-2", date: "2026-07-09", venueIndex: 5 },
+      { id: "QF-2", homeLabel: "W R16-3", awayLabel: "W R16-4", date: "2026-07-10", venueIndex: 7 },
+      { id: "QF-3", homeLabel: "W R16-5", awayLabel: "W R16-6", date: "2026-07-11", venueIndex: 0 },
+      { id: "QF-4", homeLabel: "W R16-7", awayLabel: "W R16-8", date: "2026-07-11", venueIndex: 12 },
+    ],
+  },
+  {
+    stage: "sf",
+    title: "Semi Finals",
+    slots: [
+      { id: "SF-1", homeLabel: "W QF-1", awayLabel: "W QF-2", date: "2026-07-14", venueIndex: 8 },
+      { id: "SF-2", homeLabel: "W QF-3", awayLabel: "W QF-4", date: "2026-07-15", venueIndex: 5 },
+    ],
+  },
+  {
+    stage: "third",
+    title: "Third Place",
+    slots: [
+      { id: "TP-1", homeLabel: "L SF-1", awayLabel: "L SF-2", date: "2026-07-18", venueIndex: 9 },
+    ],
+  },
+  {
+    stage: "final",
+    title: "Final",
+    slots: [
+      { id: "FIN", homeLabel: "W SF-1", awayLabel: "W SF-2", date: "2026-07-19", venueIndex: 5 },
+    ],
+  },
+];

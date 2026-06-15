@@ -1,0 +1,134 @@
+@use "abstracts" as *;
+
+$connector: 16px;
+
+.scroller {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: var(--space-3);
+  @include custom-scrollbar;
+}
+
+.bracket {
+  display: flex;
+  align-items: stretch;
+  min-width: max-content;
+  padding: var(--space-2) 0;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  padding: 0 $connector;
+}
+
+.roundHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding: 0 0.25rem;
+}
+
+.roundTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.roundCount {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.slot {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+
+// --- connector lines ---------------------------------------------------------
+// Horizontal stub leaving each card to the right.
+// Forward elbow: a horizontal line leaving the card at its centre, turning into
+// a vertical line that runs to the midpoint shared with the card's pair.
+// Lives entirely within the column's right padding ($connector wide).
+.round:not(.final) .slot::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * #{$connector});
+  width: $connector;
+  border-right: 2px solid var(--border-strong);
+}
+
+.round:not(.final) .slot:nth-child(odd)::after {
+  top: 50%;
+  height: calc(50% + 1px);
+  border-top: 2px solid var(--border-strong);
+  border-top-right-radius: 8px;
+}
+
+.round:not(.final) .slot:nth-child(even)::after {
+  bottom: 50%;
+  height: calc(50% + 1px);
+  border-bottom: 2px solid var(--border-strong);
+  border-bottom-right-radius: 8px;
+}
+
+// Incoming stub: a short horizontal line bridging the join to the next card.
+// Applied to every round except the first (Round of 32).
+.round:not(.r32) .slot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(-1 * #{$connector});
+  width: $connector;
+  height: 2px;
+  background: var(--border-strong);
+}
+
+// Single-final column needs no outgoing connectors.
+.final .matches {
+  justify-content: center;
+}
+
+// First-round / final markers (so :not(.r32)/.final selectors resolve).
+.r32 { z-index: 0; }
+
+// --- third place -------------------------------------------------------------
+.third {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--border);
+  max-width: 220px;
+}
+
+// Tighter columns on small screens.
+@include respond-below("md") {
+  .round {
+    padding: 0 12px;
+  }
+}

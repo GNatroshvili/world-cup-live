@@ -1,0 +1,26 @@
+@use "abstracts" as *;
+
+.banner {
+  margin-bottom: var(--space-5);
+}
+
+.latest {
+  margin-bottom: var(--space-8);
+}
+
+.latestGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("xl") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.boardSection {
+  padding-bottom: var(--space-8);
+}

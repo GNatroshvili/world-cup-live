@@ -1,0 +1,72 @@
+@use "abstracts" as *;
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include respond("lg") {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.totalCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  @include glass();
+}
+
+.totalValue {
+  font-family: var(--font-mono);
+  font-size: 1.7rem;
+  font-weight: 800;
+  @include gradient-text(var(--gradient-primary));
+}
+
+.totalLabel {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+
+  @include respond("md") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("xl") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.sectionTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: var(--space-4);
+}
+
+.matchGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("lg") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

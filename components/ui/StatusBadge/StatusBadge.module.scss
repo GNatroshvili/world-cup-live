@@ -1,0 +1,54 @@
+@use "abstracts" as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+}
+
+.scheduled {
+  color: var(--secondary);
+  background: rgba(22, 200, 255, 0.1);
+  border-color: rgba(22, 200, 255, 0.25);
+}
+
+.finished {
+  color: var(--text-muted);
+  background: var(--surface-2);
+}
+
+.postponed {
+  color: var(--accent);
+  background: rgba(255, 210, 76, 0.1);
+  border-color: rgba(255, 210, 76, 0.25);
+}
+
+.live {
+  color: #fff;
+  background: rgba(255, 61, 110, 0.16);
+  border-color: rgba(255, 61, 110, 0.4);
+}
+
+.pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--live);
+    animation: live-ping 1.4s ease-out infinite;
+  }
+}

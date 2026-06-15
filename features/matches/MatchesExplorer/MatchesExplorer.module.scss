@@ -1,0 +1,105 @@
+@use "abstracts" as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color var(--ease-fast), background var(--ease-fast);
+  @include clickable;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+.tabActive {
+  color: var(--text-on-accent);
+  background: var(--gradient-primary);
+}
+
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 3px rgba(255, 61, 110, 0.25);
+}
+
+.selects {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.select {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+
+  select {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    @include focus-ring;
+
+    &:hover {
+      border-color: var(--border-strong);
+    }
+  }
+}
+
+.count {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("lg") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include respond("2xl") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

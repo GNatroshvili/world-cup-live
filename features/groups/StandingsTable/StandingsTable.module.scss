@@ -1,0 +1,103 @@
+@use "abstracts" as *;
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th {
+    padding: 0.45rem 0.35rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.5rem 0.35rem;
+    text-align: center;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr {
+    transition: background var(--ease-fast);
+    &:hover {
+      background: var(--surface-2);
+    }
+  }
+}
+
+.pos,
+.team {
+  text-align: left !important;
+}
+
+.posMark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.name {
+  color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .full & {
+    display: inline;
+  }
+}
+
+.code {
+  display: none;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pts {
+  font-weight: 800;
+  color: var(--text) !important;
+}
+
+.pos1 { color: var(--win) !important; }
+.neg { color: var(--loss) !important; }
+
+// Qualification highlight (top 2).
+.qualify {
+  position: relative;
+  .posMark {
+    color: var(--text-on-accent);
+    background: var(--gradient-primary);
+    border-radius: 6px;
+  }
+}
+
+// On narrow group cards, swap full names for codes.
+@include respond-below("sm") {
+  .table:not(.full) {
+    .name { display: none; }
+    .code { display: inline; }
+  }
+}

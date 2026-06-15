@@ -1,0 +1,95 @@
+@use "abstracts" as *;
+
+.hero {
+  position: relative;
+  padding: clamp(2.5rem, 7vw, 5.5rem) 0 clamp(2rem, 4vw, 3rem);
+  overflow: hidden;
+  text-align: center;
+}
+
+.glow {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 90vw);
+  height: 600px;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(0, 224, 138, 0.16),
+    transparent 70%
+  );
+  animation: float-glow 9s ease-in-out infinite;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+}
+
+.title {
+  margin: var(--space-4) auto var(--space-3);
+  max-width: 18ch;
+  @include fluid-text(2.1, 4);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.grad {
+  @include gradient-text(var(--gradient-primary));
+}
+
+.lead {
+  max-width: 60ch;
+  margin: 0 auto;
+  color: var(--text-muted);
+  @include fluid-text(1, 1.15);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  margin-top: var(--space-5);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  max-width: 720px;
+  margin: var(--space-7) auto 0;
+
+  @include respond("md") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  @include glass();
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 800;
+  @include gradient-text(var(--gradient-primary));
+}
+
+.statLabel {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

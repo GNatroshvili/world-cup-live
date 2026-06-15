@@ -1,0 +1,43 @@
+@use "abstracts" as *;
+
+.page {
+  padding-top: clamp(2rem, 5vw, 3.5rem);
+  padding-bottom: var(--space-8);
+}
+
+.intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  @include gradient-text(var(--gradient-primary));
+}
+
+.title {
+  @include fluid-text(1.9, 3);
+  font-weight: 800;
+}
+
+.desc {
+  margin-top: var(--space-3);
+  max-width: 64ch;
+  color: var(--text-muted);
+  @include fluid-text(0.95, 1.05);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}

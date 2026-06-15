@@ -1,0 +1,88 @@
+@use "abstracts" as *;
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 152px;
+  padding: 0.5rem 0.6rem 1.2rem;
+  text-align: left;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  transition: border-color var(--ease-fast), background var(--ease-fast),
+    transform var(--ease-fast);
+  @include clickable;
+  @include focus-ring;
+
+  &:hover {
+    border-color: var(--primary);
+    background: var(--surface-2);
+    transform: translateY(-1px);
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.28rem 0;
+}
+
+.rowTeam {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.winner {
+  .label {
+    color: var(--text);
+  }
+  .score {
+    color: var(--primary);
+  }
+}
+
+.dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 1px dashed var(--border-strong);
+}
+
+.score {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.date {
+  position: absolute;
+  left: 0.6rem;
+  bottom: 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}

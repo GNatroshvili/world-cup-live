@@ -1,0 +1,63 @@
+@use "abstracts" as *;
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  overflow: hidden;
+  text-align: center;
+  transition: border-color var(--ease), transform var(--ease), box-shadow var(--ease);
+
+  &:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+
+    .glow {
+      opacity: 1;
+    }
+  }
+}
+
+.glow {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 224, 138, 0.18), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--ease);
+  pointer-events: none;
+}
+
+.name {
+  margin-top: var(--space-2);
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.country {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.group {
+  margin-top: var(--space-2);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border: 1px solid rgba(0, 224, 138, 0.2);
+}
