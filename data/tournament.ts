@@ -53,78 +53,82 @@ export const HOST_VENUES: Venue[] = [
  * The group draw — 12 groups of 4. The three hosts head Groups A (Mexico),
  * B (Canada) and D (USA). Names match TheSportsDB so live badges/info attach.
  */
+// The official Final Draw (5 December 2025). Verified against TheSportsDB's
+// lookuptable/event data — every team the API places matches this draw, and the
+// opening fixtures are ordered so the real Matchday 1 pairings fall on MD1.
+// Team `name`s mirror TheSportsDB so live badges/info attach automatically.
 export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
   A: [
     { name: "Mexico", code: "MEX", country: "Mexico" },
-    { name: "Croatia", code: "CRO", country: "Croatia" },
-    { name: "Norway", code: "NOR", country: "Norway" },
     { name: "South Africa", code: "RSA", country: "South Africa" },
+    { name: "South Korea", code: "KOR", country: "South Korea" },
+    { name: "Czech Republic", code: "CZE", country: "Czechia" },
   ],
   B: [
     { name: "Canada", code: "CAN", country: "Canada" },
-    { name: "Belgium", code: "BEL", country: "Belgium" },
-    { name: "Ecuador", code: "ECU", country: "Ecuador" },
+    { name: "Bosnia-Herzegovina", code: "BIH", country: "Bosnia & Herzegovina" },
     { name: "Qatar", code: "QAT", country: "Qatar" },
+    { name: "Switzerland", code: "SUI", country: "Switzerland" },
   ],
   C: [
-    { name: "Argentina", code: "ARG", country: "Argentina" },
-    { name: "Switzerland", code: "SUI", country: "Switzerland" },
-    { name: "Egypt", code: "EGY", country: "Egypt" },
-    { name: "New Zealand", code: "NZL", country: "New Zealand" },
+    { name: "Brazil", code: "BRA", country: "Brazil" },
+    { name: "Morocco", code: "MAR", country: "Morocco" },
+    { name: "Haiti", code: "HAI", country: "Haiti" },
+    { name: "Scotland", code: "SCO", country: "Scotland" },
   ],
   D: [
     { name: "USA", code: "USA", country: "United States" },
-    { name: "Colombia", code: "COL", country: "Colombia" },
-    { name: "Iran", code: "IRN", country: "Iran" },
-    { name: "Cape Verde", code: "CPV", country: "Cape Verde" },
+    { name: "Paraguay", code: "PAR", country: "Paraguay" },
+    { name: "Australia", code: "AUS", country: "Australia" },
+    { name: "Turkey", code: "TUR", country: "Türkiye" },
   ],
   E: [
-    { name: "Spain", code: "ESP", country: "Spain" },
-    { name: "Uruguay", code: "URU", country: "Uruguay" },
-    { name: "Ivory Coast", code: "CIV", country: "Ivory Coast" },
-    { name: "Jordan", code: "JOR", country: "Jordan" },
+    { name: "Germany", code: "GER", country: "Germany" },
+    { name: "Curacao", code: "CUW", country: "Curaçao" },
+    { name: "Ivory Coast", code: "CIV", country: "Côte d'Ivoire" },
+    { name: "Ecuador", code: "ECU", country: "Ecuador" },
   ],
   F: [
-    { name: "France", code: "FRA", country: "France" },
-    { name: "Senegal", code: "SEN", country: "Senegal" },
-    { name: "Australia", code: "AUS", country: "Australia" },
-    { name: "Panama", code: "PAN", country: "Panama" },
-  ],
-  G: [
-    { name: "Brazil", code: "BRA", country: "Brazil" },
-    { name: "Austria", code: "AUT", country: "Austria" },
-    { name: "Ghana", code: "GHA", country: "Ghana" },
-    { name: "Curacao", code: "CUW", country: "Curacao" },
-  ],
-  H: [
-    { name: "Portugal", code: "POR", country: "Portugal" },
-    { name: "Morocco", code: "MAR", country: "Morocco" },
-    { name: "South Korea", code: "KOR", country: "South Korea" },
-    { name: "Haiti", code: "HAI", country: "Haiti" },
-  ],
-  I: [
-    { name: "England", code: "ENG", country: "England" },
-    { name: "Denmark", code: "DEN", country: "Denmark" },
-    { name: "Saudi Arabia", code: "KSA", country: "Saudi Arabia" },
-    { name: "Tunisia", code: "TUN", country: "Tunisia" },
-  ],
-  J: [
     { name: "Netherlands", code: "NED", country: "Netherlands" },
     { name: "Japan", code: "JPN", country: "Japan" },
+    { name: "Sweden", code: "SWE", country: "Sweden" },
+    { name: "Tunisia", code: "TUN", country: "Tunisia" },
+  ],
+  G: [
+    { name: "Belgium", code: "BEL", country: "Belgium" },
+    { name: "Egypt", code: "EGY", country: "Egypt" },
+    { name: "Iran", code: "IRN", country: "Iran" },
+    { name: "New Zealand", code: "NZL", country: "New Zealand" },
+  ],
+  H: [
+    { name: "Spain", code: "ESP", country: "Spain" },
+    { name: "Cape Verde", code: "CPV", country: "Cabo Verde" },
+    { name: "Saudi Arabia", code: "KSA", country: "Saudi Arabia" },
+    { name: "Uruguay", code: "URU", country: "Uruguay" },
+  ],
+  I: [
+    { name: "France", code: "FRA", country: "France" },
+    { name: "Senegal", code: "SEN", country: "Senegal" },
+    { name: "Iraq", code: "IRQ", country: "Iraq" },
+    { name: "Norway", code: "NOR", country: "Norway" },
+  ],
+  J: [
+    { name: "Argentina", code: "ARG", country: "Argentina" },
     { name: "Algeria", code: "ALG", country: "Algeria" },
-    { name: "Scotland", code: "SCO", country: "Scotland" },
+    { name: "Austria", code: "AUT", country: "Austria" },
+    { name: "Jordan", code: "JOR", country: "Jordan" },
   ],
   K: [
-    { name: "Germany", code: "GER", country: "Germany" },
-    { name: "Paraguay", code: "PAR", country: "Paraguay" },
-    { name: "Turkey", code: "TUR", country: "Turkey" },
+    { name: "Portugal", code: "POR", country: "Portugal" },
     { name: "DR Congo", code: "COD", country: "DR Congo" },
+    { name: "Uzbekistan", code: "UZB", country: "Uzbekistan" },
+    { name: "Colombia", code: "COL", country: "Colombia" },
   ],
   L: [
-    { name: "Italy", code: "ITA", country: "Italy" },
-    { name: "Ukraine", code: "UKR", country: "Ukraine" },
-    { name: "Iraq", code: "IRQ", country: "Iraq" },
-    { name: "Bolivia", code: "BOL", country: "Bolivia" },
+    { name: "England", code: "ENG", country: "England" },
+    { name: "Croatia", code: "CRO", country: "Croatia" },
+    { name: "Ghana", code: "GHA", country: "Ghana" },
+    { name: "Panama", code: "PAN", country: "Panama" },
   ],
 };
 
