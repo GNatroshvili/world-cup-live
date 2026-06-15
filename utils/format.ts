@@ -1,9 +1,15 @@
 import type { Match, MatchStatus } from "@/types";
 
+// Matches are scheduled against the tournament calendar, so dates/times are
+// rendered in a fixed timezone (UTC). Using the viewer's local timezone would
+// shift the displayed calendar day (e.g. the Final drifting from 19 → 20 Jul).
+const TZ = "UTC";
+
 const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   weekday: "short",
   day: "numeric",
   month: "short",
+  timeZone: TZ,
 });
 
 const DATE_LONG_FMT = new Intl.DateTimeFormat("en-GB", {
@@ -11,11 +17,14 @@ const DATE_LONG_FMT = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "long",
   year: "numeric",
+  timeZone: TZ,
 });
 
 const TIME_FMT = new Intl.DateTimeFormat("en-GB", {
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: TZ,
+  timeZoneName: "short",
 });
 
 export function formatDate(iso: string | null): string {
