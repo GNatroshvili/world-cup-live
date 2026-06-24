@@ -47,7 +47,16 @@ export function Footer() {
         <div className={styles.col}>
           <p className={styles.colTitle}>Data</p>
           <p className={styles.attrib}>
-            Match & team data provided by{" "}
+            Live scores & standings from{" "}
+            <a
+              href="https://www.espn.com/soccer/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+            >
+              ESPN
+            </a>
+            ; team profiles from{" "}
             <a
               href="https://www.thesportsdb.com"
               target="_blank"

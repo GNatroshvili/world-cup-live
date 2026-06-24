@@ -8,8 +8,11 @@ const nextConfig: NextConfig = {
     loadPaths: [path.join(process.cwd(), "styles")],
   },
   images: {
-    // TheSportsDB serves badges/banners/thumbnails from these hosts.
+    // ESPN serves team crests; TheSportsDB serves badges/banners/thumbnails.
     remotePatterns: [
+      { protocol: "https", hostname: "a.espncdn.com", pathname: "/**" },
+      { protocol: "https", hostname: "a1.espncdn.com", pathname: "/**" },
+      { protocol: "https", hostname: "a2.espncdn.com", pathname: "/**" },
       { protocol: "https", hostname: "r2.thesportsdb.com", pathname: "/**" },
       { protocol: "https", hostname: "www.thesportsdb.com", pathname: "/**" },
       { protocol: "https", hostname: "thesportsdb.com", pathname: "/**" },

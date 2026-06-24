@@ -4,10 +4,11 @@ import { HomeBoard } from "@/features/home/HomeBoard/HomeBoard";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
 import { SectionHeading } from "@/components/ui/SectionHeading/SectionHeading";
 import { OfflineBanner } from "@/components/ui/OfflineBanner/OfflineBanner";
+import { LiveStatus } from "@/components/live/LiveStatus/LiveStatus";
 import styles from "./page.module.scss";
 
-// Refresh the tournament view every 10 minutes (ISR).
-export const revalidate = 600;
+// Always render fresh; the API fetch itself is cached for 30s to shield the key.
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const { data, fromFallback } = await getTournament();
@@ -54,6 +55,7 @@ export default async function HomePage() {
             eyebrow="Tournament Board"
             title="Groups & Knockout Bracket"
             description="All twelve groups flank the full knockout bracket. Open any group or tie for the full breakdown."
+            actions={<LiveStatus updatedAt={data.updatedAt} />}
           />
           <HomeBoard groups={data.groups} bracket={data.bracket} />
         </section>

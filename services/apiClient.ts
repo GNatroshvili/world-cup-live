@@ -1,12 +1,12 @@
-// Resilient fetch wrapper for TheSportsDB with timeout, retry + backoff,
-// and Next.js data-cache revalidation. Server-side only.
+// Resilient JSON fetch wrapper with timeout, retry + backoff, and Next.js
+// data-cache revalidation. Server-side only. Used by every data source.
 
 const API_KEY = process.env.THESPORTSDB_KEY ?? "3"; // "3" = free public test key
 const BASE_URL = `https://www.thesportsdb.com/api/v1/json/${API_KEY}`;
 
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_RETRIES = 2;
-const DEFAULT_REVALIDATE = 60 * 30; // 30 minutes
+const DEFAULT_REVALIDATE = 60; // 1 minute — keep data fresh by default
 
 export class ApiError extends Error {
   constructor(
@@ -30,11 +30,11 @@ interface FetchOptions {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * Fetch a path (relative to the API base) and parse JSON.
- * Retries transient failures (network / 5xx / timeout) with exponential backoff.
+ * Fetch a full URL and parse JSON. Retries transient failures (network / 5xx /
+ * timeout) with exponential backoff. Generic across data sources.
  */
-export async function sdbFetch<T>(
-  path: string,
+export async function fetchJson<T>(
+  url: string,
   options: FetchOptions = {},
 ): Promise<T> {
   const {
@@ -44,7 +44,6 @@ export async function sdbFetch<T>(
     signal,
   } = options;
 
-  const url = `${BASE_URL}${path}`;
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -66,10 +65,7 @@ export async function sdbFetch<T>(
         if (res.status >= 500 && attempt < retries) {
           throw new ApiError(`Upstream ${res.status}`, res.status);
         }
-        throw new ApiError(
-          `Request to ${path} failed with ${res.status}`,
-          res.status,
-        );
+        throw new ApiError(`Request failed with ${res.status}`, res.status);
       }
 
       return (await res.json()) as T;
@@ -89,8 +85,13 @@ export async function sdbFetch<T>(
   }
 
   throw new ApiError(
-    `Request to ${path} failed after ${retries + 1} attempts`,
+    `Request failed after ${retries + 1} attempts`,
     undefined,
     lastError,
   );
+}
+
+/** TheSportsDB-specific helper: resolves a path against the league base URL. */
+export function sdbFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
+  return fetchJson<T>(`${BASE_URL}${path}`, options);
 }

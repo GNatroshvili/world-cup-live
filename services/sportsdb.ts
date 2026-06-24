@@ -28,7 +28,7 @@ export async function fetchSeasonEvents(
 ): Promise<SdbEventsResponse["events"]> {
   const data = await sdbFetch<SdbEventsResponse>(
     `/eventsseason.php?id=${WORLD_CUP_LEAGUE_ID}&s=${season}`,
-    { revalidate: 60 * 10 }, // results update during the tournament
+    { revalidate: 30 }, // live scores during the tournament — refresh every 30s
   );
   return data.events ?? [];
 }
@@ -36,7 +36,7 @@ export async function fetchSeasonEvents(
 /** A single event by id (used for match detail enrichment). */
 export async function fetchEventById(id: string): Promise<SdbEventsResponse["events"]> {
   const data = await sdbFetch<SdbEventsResponse>(`/lookupevent.php?id=${id}`, {
-    revalidate: 60 * 5,
+    revalidate: 30,
   });
   return data.events ?? [];
 }
@@ -49,12 +49,30 @@ export async function fetchTeamById(id: string): Promise<SdbTeam | null> {
   return data.teams?.[0] ?? null;
 }
 
+/**
+ * Search a team by name (used to enrich ESPN-sourced teams with descriptions
+ * and banners, since the two sources use different id spaces).
+ */
+export async function fetchTeamByName(name: string): Promise<SdbTeam | null> {
+  const data = await sdbFetch<SdbTeamsResponse>(
+    `/searchteams.php?t=${encodeURIComponent(name)}`,
+    { revalidate: 60 * 60 * 24 },
+  );
+  const teams = data.teams ?? [];
+  // Prefer a soccer national team result.
+  return (
+    teams.find((t) => (t.strLeague ?? "").toLowerCase().includes("world cup")) ??
+    teams[0] ??
+    null
+  );
+}
+
 /** Last N events for a team (recent matches on team page). */
 export async function fetchTeamLastEvents(
   id: string,
 ): Promise<SdbEventsResponse["events"]> {
   const data = await sdbFetch<SdbEventsResponse>(`/eventslast.php?id=${id}`, {
-    revalidate: 60 * 30,
+    revalidate: 60,
   });
   return data.events ?? [];
 }

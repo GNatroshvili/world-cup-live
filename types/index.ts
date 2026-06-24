@@ -140,9 +140,21 @@ export interface TournamentStatistics {
   highestScoringMatches: Match[];
 }
 
+/** The complete, normalized tournament dataset consumed by the app. */
+export interface TournamentData {
+  teams: Team[];
+  teamsById: Record<string, Team>;
+  groups: Group[];
+  bracket: Bracket;
+  matches: Match[];
+  statistics: TournamentStatistics;
+  /** ISO timestamp of when this dataset was assembled (for "last synced" UI). */
+  updatedAt: string;
+}
+
 /** Wrapper carrying provenance so the UI can flag fallback/offline state. */
 export interface DataResult<T> {
   data: T;
-  /** true when the live API could not be reached and seed data was used. */
+  /** true when the primary source failed and fallback/seed data was used. */
   fromFallback: boolean;
 }

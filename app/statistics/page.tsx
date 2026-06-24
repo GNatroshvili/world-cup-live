@@ -4,9 +4,10 @@ import { PageContainer } from "@/components/layout/PageContainer/PageContainer";
 import { Leaderboard } from "@/features/statistics/Leaderboard/Leaderboard";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { LiveStatus } from "@/components/live/LiveStatus/LiveStatus";
 import styles from "./statistics.module.scss";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Statistics",
@@ -32,6 +33,7 @@ export default async function StatisticsPage() {
       eyebrow="By the Numbers"
       title="Tournament Statistics"
       description="Live leaderboards computed from match results. Figures grow as the tournament progresses."
+      actions={<LiveStatus updatedAt={data.updatedAt} />}
     >
       <div className={styles.totals}>
         {totals.map((t) => (

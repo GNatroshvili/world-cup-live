@@ -16,7 +16,7 @@ import { cache } from "react";
 import {
   fetchAllTeams,
   fetchSeasonEvents,
-  fetchTeamById,
+  fetchTeamByName,
   WORLD_CUP_LEAGUE_NAME,
 } from "@/services/sportsdb";
 import { buildStatistics, computeStandings } from "@/lib/derive";
@@ -28,6 +28,7 @@ import {
   KNOCKOUT_TEMPLATE,
   MATCHDAY_OFFSETS_DAYS,
 } from "@/data/tournament";
+import { buildFromEspn } from "@/lib/espnAdapter";
 import type { SdbEvent, SdbTeam } from "@/types/thesportsdb";
 import type {
   Bracket,
@@ -40,17 +41,11 @@ import type {
   MatchStatus,
   Team,
   TeamRef,
+  TournamentData,
   TournamentStatistics,
 } from "@/types";
 
-export interface TournamentData {
-  teams: Team[];
-  teamsById: Record<string, Team>;
-  groups: Group[];
-  bracket: Bracket;
-  matches: Match[];
-  statistics: TournamentStatistics;
-}
+export type { TournamentData };
 
 // --- name normalization for matching API <-> seed -----------------------------
 const ALIASES: Record<string, string> = {
@@ -364,21 +359,19 @@ function uniqueRefs(matches: Match[]): TeamRef[] {
 }
 
 /**
- * Build the full tournament dataset. Memoized per request via React `cache`;
- * cross-request caching is handled by fetch revalidation in the service layer.
+ * Fallback pipeline: builds the tournament from the static seed draw enriched
+ * with TheSportsDB. Used only when the primary ESPN source is unreachable.
  */
-export const getTournament = cache(
-  async (): Promise<DataResult<TournamentData>> => {
+async function buildSeedTournament(): Promise<TournamentData> {
     let apiTeams: SdbTeam[] = [];
     let apiEvents: SdbEvent[] = [];
-    let fromFallback = false;
 
     try {
       const [t, e] = await Promise.all([fetchAllTeams(), fetchSeasonEvents()]);
       apiTeams = t;
       apiEvents = e ?? [];
     } catch {
-      fromFallback = true;
+      // network down — seed structure still renders below
     }
 
     const { teams, refByCode } = buildTeams(apiTeams);
@@ -431,9 +424,33 @@ export const getTournament = cache(
     for (const t of teams) teamsById[t.id] = t;
 
     return {
-      data: { teams, teamsById, groups, bracket, matches, statistics },
-      fromFallback,
+      teams,
+      teamsById,
+      groups,
+      bracket,
+      matches,
+      statistics,
+      updatedAt: new Date().toISOString(),
     };
+}
+
+/**
+ * Build the full tournament dataset. Primary source is ESPN's public API
+ * (real standings, full schedule, live scores); on failure it falls back to the
+ * seed + TheSportsDB pipeline. Memoized per request via React `cache`;
+ * cross-request caching is handled by fetch revalidation in the service layer.
+ */
+export const getTournament = cache(
+  async (): Promise<DataResult<TournamentData>> => {
+    try {
+      const data = await buildFromEspn();
+      if (data.teams.length > 0 && data.matches.length > 0) {
+        return { data, fromFallback: false };
+      }
+    } catch {
+      // ESPN unreachable — fall back to the seed pipeline below.
+    }
+    return { data: await buildSeedTournament(), fromFallback: true };
   },
 );
 
@@ -475,25 +492,34 @@ export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
   let team = data.teamsById[id];
   if (!team) return null;
 
-  // Enrich with a fresh single-team lookup when we have a real API id.
-  if (/^\d+$/.test(id)) {
-    try {
-      const api = await fetchTeamById(id);
-      if (api) {
-        team = {
-          ...team,
-          description: api.strDescriptionEN ?? team.description,
-          banner: api.strBanner ?? team.banner,
-          stadium: api.strStadium ?? team.stadium,
-          location: api.strLocation ?? team.location,
-          capacity: api.intStadiumCapacity
-            ? parseInt(api.intStadiumCapacity, 10)
-            : team.capacity,
-        };
-      }
-    } catch {
-      // keep tournament-level data on failure
+  // Enrich with TheSportsDB metadata (description, banner, stadium) by name,
+  // since the primary source (ESPN) doesn't carry long-form team content.
+  try {
+    const api = await fetchTeamByName(team.name);
+    if (api) {
+      team = {
+        ...team,
+        description: team.description ?? api.strDescriptionEN ?? null,
+        banner: team.banner ?? api.strBanner ?? null,
+        logo: team.logo ?? api.strLogo ?? null,
+        fanart: team.fanart.length
+          ? team.fanart
+          : [api.strFanart1, api.strFanart2, api.strFanart3, api.strFanart4].filter(
+              (x): x is string => Boolean(x),
+            ),
+        stadium: team.stadium ?? api.strStadium ?? null,
+        location: team.location ?? api.strLocation ?? null,
+        capacity:
+          team.capacity ??
+          (api.intStadiumCapacity ? parseInt(api.intStadiumCapacity, 10) : null),
+        formedYear:
+          team.formedYear ??
+          (api.intFormedYear ? parseInt(api.intFormedYear, 10) : null),
+        website: team.website ?? api.strWebsite ?? null,
+      };
     }
+  } catch {
+    // keep tournament-level data on failure
   }
 
   const involves = (m: Match) => m.home?.id === id || m.away?.id === id;

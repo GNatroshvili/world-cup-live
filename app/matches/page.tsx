@@ -4,8 +4,9 @@ import { GROUP_IDS } from "@/data/tournament";
 import { PageContainer } from "@/components/layout/PageContainer/PageContainer";
 import { MatchesExplorer } from "@/features/matches/MatchesExplorer/MatchesExplorer";
 import { OfflineBanner } from "@/components/ui/OfflineBanner/OfflineBanner";
+import { LiveStatus } from "@/components/live/LiveStatus/LiveStatus";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Match Centre",
@@ -34,6 +35,7 @@ export default async function MatchesPage({
       eyebrow="Match Centre"
       title="Fixtures & Results"
       description="Follow every tie across the group stage and knockout rounds. Filter by status or group and sort by date."
+      actions={<LiveStatus updatedAt={data.updatedAt} />}
     >
       {fromFallback && (
         <div style={{ marginBottom: "var(--space-5)" }}>

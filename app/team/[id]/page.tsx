@@ -8,7 +8,7 @@ import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import styles from "./team.module.scss";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 interface Params {
   params: Promise<{ id: string }>;
