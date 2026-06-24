@@ -29,6 +29,13 @@ import {
   MATCHDAY_OFFSETS_DAYS,
 } from "@/data/tournament";
 import { buildFromEspn } from "@/lib/espnAdapter";
+import {
+  aggregateDetailedStats,
+  buildTeamSeasonStats,
+  parseMatchSummary,
+} from "@/lib/espnStats";
+import { fetchEspnSummary } from "@/services/espn";
+import { worldCupTitles } from "@/data/honours";
 import type { SdbEvent, SdbTeam } from "@/types/thesportsdb";
 import type {
   Bracket,
@@ -37,12 +44,16 @@ import type {
   DataResult,
   Group,
   GroupId,
+  DetailedStats,
   Match,
+  MatchDetail,
   MatchStatus,
   Team,
   TeamRef,
+  TeamSeasonStats,
   TournamentData,
   TournamentStatistics,
+  WorldCupHonours,
 } from "@/types";
 
 export type { TournamentData };
@@ -481,10 +492,45 @@ export async function getStatistics(): Promise<DataResult<TournamentStatistics>>
   return { data: data.statistics, fromFallback };
 }
 
+/**
+ * Player + team leaderboards aggregated from per-match summaries (top scorers,
+ * assists, shots, passes, possession, per-team stats). Heavier than the base
+ * dataset — only the statistics page uses it. Memoized per request.
+ */
+export const getDetailedStats = cache(async (): Promise<DetailedStats> => {
+  const { data } = await getTournament();
+  const finished = data.matches.filter((m) => m.status === "finished");
+  try {
+    return await aggregateDetailedStats(finished, data.teamsById);
+  } catch {
+    return {
+      topScorers: [],
+      topAssists: [],
+      mostShots: [],
+      mostShotsOnTarget: [],
+      mostPasses: [],
+      bestPossession: [],
+      teamStats: [],
+      sampledMatches: 0,
+    };
+  }
+});
+
+/** Goal timeline + team statistics for a single match (used by the modal). */
+export async function getMatchDetail(eventId: string): Promise<MatchDetail | null> {
+  try {
+    const summary = await fetchEspnSummary(eventId);
+    return parseMatchSummary(summary);
+  } catch {
+    return null;
+  }
+}
+
 export interface TeamDetail {
   team: Team;
   recent: Match[];
   upcoming: Match[];
+  honours: WorldCupHonours;
 }
 
 export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
@@ -533,5 +579,23 @@ export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
     .sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""))
     .slice(0, 6);
 
-  return { team, recent, upcoming };
+  return { team, recent, upcoming, honours: worldCupTitles(team.name) };
 }
+
+/** A team's aggregate stats (possession etc.) across its played matches. */
+export const getTeamSeasonStats = cache(
+  async (teamId: string): Promise<TeamSeasonStats | null> => {
+    const { data } = await getTournament();
+    const finished = data.matches.filter(
+      (m) =>
+        m.status === "finished" &&
+        (m.home?.id === teamId || m.away?.id === teamId),
+    );
+    if (finished.length === 0) return null;
+    try {
+      return await buildTeamSeasonStats(teamId, finished);
+    } catch {
+      return null;
+    }
+  },
+);

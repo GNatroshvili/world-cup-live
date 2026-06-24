@@ -70,3 +70,27 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("xl") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.skeletonCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+}

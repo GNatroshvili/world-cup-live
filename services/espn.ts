@@ -4,9 +4,12 @@
 
 import { fetchJson } from "./apiClient";
 import type {
+  EspnAthleteResponse,
   EspnEvent,
+  EspnRosterResponse,
   EspnScoreboardResponse,
   EspnStandingsResponse,
+  EspnSummary,
   EspnTeamsResponse,
 } from "@/types/espn";
 
@@ -34,6 +37,28 @@ async function fetchRange(dates: string): Promise<EspnEvent[]> {
     { revalidate: 30 },
   );
   return data.events ?? [];
+}
+
+/** Detailed summary for a single match (goal timeline + team statistics). */
+export function fetchEspnSummary(eventId: string): Promise<EspnSummary> {
+  return fetchJson<EspnSummary>(`${SITE}/summary?event=${eventId}`, {
+    revalidate: 120,
+  });
+}
+
+/** A team's squad (26-player roster). */
+export function fetchEspnRoster(teamId: string): Promise<EspnRosterResponse> {
+  return fetchJson<EspnRosterResponse>(`${SITE}/teams/${teamId}?enable=roster`, {
+    revalidate: 60 * 60 * 12,
+  });
+}
+
+/** A single player's profile/bio. */
+export function fetchEspnAthlete(athleteId: string): Promise<EspnAthleteResponse> {
+  return fetchJson<EspnAthleteResponse>(
+    `https://site.web.api.espn.com/apis/common/v3/sports/soccer/fifa.world/athletes/${athleteId}`,
+    { revalidate: 60 * 60 * 12 },
+  );
 }
 
 /** The complete fixture list (group stage + knockouts), de-duplicated by id. */

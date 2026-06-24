@@ -140,6 +140,117 @@ export interface TournamentStatistics {
   highestScoringMatches: Match[];
 }
 
+// --- Match detail (from ESPN summary) ---------------------------------------
+export type MatchEventType = "goal" | "penalty" | "own" | "yellow" | "red" | "sub";
+
+export interface MatchEventEntry {
+  minute: string; // e.g. "21'"
+  type: MatchEventType;
+  player: string;
+  /** Second player (assist for goals, player-in for subs). */
+  secondary: string | null;
+  /** "home" | "away" relative to the match. */
+  side: "home" | "away" | null;
+}
+
+export interface TeamMatchStats {
+  possession: number | null;
+  shots: number | null;
+  shotsOnTarget: number | null;
+  passes: number | null;
+  passAccuracy: number | null;
+  corners: number | null;
+  fouls: number | null;
+  offsides: number | null;
+  saves: number | null;
+  yellowCards: number | null;
+}
+
+export interface MatchDetail {
+  events: MatchEventEntry[];
+  home: TeamMatchStats;
+  away: TeamMatchStats;
+}
+
+// --- Player / team leaderboards (aggregated) --------------------------------
+export interface PlayerStat {
+  player: string;
+  team: TeamRef | null;
+  value: number;
+  /** "goals" or "assists" etc. */
+  detail?: string;
+}
+
+export interface TeamStatRow {
+  team: TeamRef;
+  played: number;
+  goalsFor: number;
+  shots: number;
+  shotsOnTarget: number;
+  possession: number; // average %
+  passes: number;
+  corners: number;
+}
+
+export interface DetailedStats {
+  topScorers: PlayerStat[];
+  topAssists: PlayerStat[];
+  mostShots: StatLeader[];
+  mostShotsOnTarget: StatLeader[];
+  mostPasses: StatLeader[];
+  bestPossession: StatLeader[];
+  teamStats: TeamStatRow[];
+  /** number of matches that contributed (for empty-state messaging). */
+  sampledMatches: number;
+}
+
+// --- Players / squad --------------------------------------------------------
+export type PositionGroup =
+  | "Goalkeepers"
+  | "Defenders"
+  | "Midfielders"
+  | "Forwards"
+  | "Squad";
+
+export interface Player {
+  id: string;
+  name: string;
+  jersey: string | null;
+  age: number | null;
+  position: string | null; // e.g. "Goalkeeper"
+  positionGroup: PositionGroup;
+  headshot: string | null;
+  teamId: string;
+}
+
+export interface PlayerDetail extends Player {
+  height: string | null;
+  weight: string | null;
+  dateOfBirth: string | null;
+  citizenship: string | null;
+  birthPlace: string | null;
+  team: TeamRef | null;
+}
+
+/** A team's aggregate stats across its played matches (possession etc.). */
+export interface TeamSeasonStats {
+  matches: number;
+  avgPossession: number;
+  totalShots: number;
+  shotsOnTarget: number;
+  totalPasses: number;
+  passAccuracy: number;
+  corners: number;
+  fouls: number;
+  /** possession per match for a mini timeline */
+  perMatch: { matchId: string; possession: number | null; opponent: string | null }[];
+}
+
+export interface WorldCupHonours {
+  count: number;
+  years: number[];
+}
+
 /** The complete, normalized tournament dataset consumed by the app. */
 export interface TournamentData {
   teams: Team[];

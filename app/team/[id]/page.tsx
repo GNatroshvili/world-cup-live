@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTeamDetail } from "@/lib/worldcup";
+import { getTeamSquad } from "@/lib/players";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
+import { SquadSection } from "@/features/players/SquadSection/SquadSection";
+import { TeamSeasonStatsBlock } from "@/features/teams/TeamSeasonStatsBlock/TeamSeasonStatsBlock";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
 import styles from "./team.module.scss";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +47,9 @@ export default async function TeamPage({ params }: Params) {
   const detail = await getTeamDetail(id);
   if (!detail) notFound();
 
-  const { team, recent, upcoming } = detail;
+  const { team, recent, upcoming, honours } = detail;
+  const isEspn = /^\d+$/.test(team.id);
+  const squad = isEspn ? await getTeamSquad(team.id) : [];
 
   return (
     <article className={styles.page}>
@@ -111,6 +118,21 @@ export default async function TeamPage({ params }: Params) {
               <EmptyState title="No upcoming fixtures scheduled" />
             )}
           </section>
+
+          {isEspn && (
+            <Suspense
+              fallback={<Skeleton height="120px" className={styles.blockSkeleton} />}
+            >
+              <TeamSeasonStatsBlock teamId={team.id} />
+            </Suspense>
+          )}
+
+          {isEspn && (
+            <section>
+              <h2 className={styles.sectionTitle}>Squad</h2>
+              <SquadSection squad={squad} />
+            </section>
+          )}
         </div>
 
         <aside className={styles.aside}>
@@ -125,6 +147,16 @@ export default async function TeamPage({ params }: Params) {
               value={team.capacity ? team.capacity.toLocaleString() : null}
             />
             <Fact label="Founded" value={team.formedYear} />
+            {honours.count > 0 && (
+              <div className={styles.fact}>
+                <span className={styles.factLabel}>World Cup Titles</span>
+                <span className={styles.factValue}>
+                  <span className={styles.titles}>
+                    {"★".repeat(honours.count)} {honours.count}
+                  </span>
+                </span>
+              </div>
+            )}
             {team.website && (
               <div className={styles.fact}>
                 <span className={styles.factLabel}>Website</span>
@@ -139,6 +171,22 @@ export default async function TeamPage({ params }: Params) {
               </div>
             )}
           </div>
+
+          {honours.count > 0 && (
+            <div className={styles.honoursCard}>
+              <h2 className={styles.sectionTitle}>Honours</h2>
+              <p className={styles.honoursLead}>
+                {honours.count}× FIFA World Cup{honours.count > 1 ? "s" : ""}
+              </p>
+              <div className={styles.honoursYears}>
+                {honours.years.map((y) => (
+                  <span key={y} className={styles.year}>
+                    {y}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </aside>
       </div>
     </article>

@@ -1,0 +1,37 @@
+@use "abstracts" as *;
+
+.section {
+  margin-bottom: var(--space-7);
+}
+
+.sectionTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: var(--space-4);
+}
+
+.duo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond("md") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.quad {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond("xl") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

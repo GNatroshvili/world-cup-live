@@ -80,3 +80,62 @@ export interface EspnEvent {
 export interface EspnScoreboardResponse {
   events: EspnEvent[];
 }
+
+// --- Match summary (event detail) -------------------------------------------
+export interface EspnKeyEvent {
+  type?: { id?: string; text?: string };
+  text?: string;
+  clock?: { displayValue?: string };
+  scoringPlay?: boolean;
+  team?: { id?: string; displayName?: string };
+  participants?: { athlete?: { id?: string; displayName?: string } }[];
+}
+
+export interface EspnBoxscoreTeam {
+  team: EspnTeamLite;
+  homeAway?: "home" | "away";
+  statistics?: { name: string; displayValue: string; value?: number }[];
+}
+
+export interface EspnSummary {
+  keyEvents?: EspnKeyEvent[];
+  boxscore?: { teams?: EspnBoxscoreTeam[] };
+  header?: {
+    competitions?: {
+      competitors?: {
+        id?: string;
+        homeAway?: "home" | "away";
+        team?: EspnTeamLite;
+        score?: string;
+      }[];
+    }[];
+  };
+}
+
+// --- Roster / athletes ------------------------------------------------------
+export interface EspnAthleteLite {
+  id: string;
+  displayName: string;
+  fullName?: string;
+  shortName?: string;
+  jersey?: string;
+  age?: number;
+  dateOfBirth?: string;
+  displayHeight?: string;
+  displayWeight?: string;
+  position?: { name?: string; abbreviation?: string; displayName?: string };
+  headshot?: { href?: string };
+  flag?: { href?: string };
+  citizenship?: string;
+  birthPlace?: { city?: string; country?: string };
+}
+
+export interface EspnRosterResponse {
+  team?: { id?: string; displayName?: string; athletes?: EspnAthleteLite[] };
+}
+
+export interface EspnAthleteResponse {
+  athlete?: EspnAthleteLite & {
+    team?: EspnTeamLite;
+  };
+}

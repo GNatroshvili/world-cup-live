@@ -5,6 +5,7 @@ import { Modal } from "@/components/ui/Modal/Modal";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { formatLongDate, formatTime, scoreline } from "@/utils/format";
+import { MatchDetailPanel } from "@/features/matches/MatchDetailPanel/MatchDetailPanel";
 import type { Match } from "@/types";
 import styles from "./MatchDetailsModal.module.scss";
 
@@ -93,6 +94,8 @@ export function MatchDetailsModal({ match, onClose }: Props) {
               value={match.group ? `Group Stage · Group ${match.group}` : match.roundLabel}
             />
           </div>
+
+          <MatchDetailPanel key={match.id} match={match} />
         </div>
       )}
     </Modal>

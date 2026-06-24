@@ -1,0 +1,159 @@
+@use "abstracts" as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.heading {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: var(--space-3);
+}
+
+// --- timeline ---------------------------------------------------------------
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  position: relative;
+  padding: var(--space-2) 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--border);
+  }
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 50%;
+}
+
+.left {
+  justify-content: flex-end;
+  align-self: flex-start;
+  flex-direction: row;
+  padding-right: var(--space-4);
+}
+
+.right {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  padding-left: var(--space-4);
+  text-align: right;
+}
+
+.eventBody {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+
+  .right & {
+    flex-direction: row-reverse;
+  }
+}
+
+.icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.assist {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.minute {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex: 0 0 auto;
+}
+
+// --- stat bars --------------------------------------------------------------
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.statVal {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.statLead {
+  color: var(--text);
+}
+
+.statMid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.statLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.statTrack {
+  display: flex;
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-3);
+}
+
+.statFillHome {
+  background: var(--gradient-primary);
+  border-radius: 999px 0 0 999px;
+}
+
+.statFillAway {
+  background: var(--secondary);
+  opacity: 0.6;
+  border-radius: 0 999px 999px 0;
+}
