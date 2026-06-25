@@ -13,6 +13,7 @@ const NAV = [
   { href: "/matches", label: "Matches" },
   { href: "/teams", label: "Teams" },
   { href: "/statistics", label: "Statistics" },
+  { href: "/fantasy", label: "Fantasy" },
 ];
 
 function Logo() {
