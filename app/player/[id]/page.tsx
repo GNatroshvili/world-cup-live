@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPlayer } from "@/lib/players";
 import { getTournament } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { teamInitials, formatLongDate } from "@/utils/format";
 import type { TeamRef } from "@/types";
@@ -38,25 +39,27 @@ function Fact({ label, value }: { label: string; value: string | number | null }
 }
 
 export default async function PlayerPage({ params, searchParams }: Params) {
-  const { id } = await params;
-  const { team: teamParam } = await searchParams;
+  const [{ id }, { team: teamParam }, t] = await Promise.all([
+    params,
+    searchParams,
+    getServerT(),
+  ]);
+
   const player = await getPlayer(id);
   if (!player) notFound();
 
-  // Prefer the NATIONAL team the user navigated from (the athlete payload's
-  // own `team` is the player's club, which isn't relevant in a World Cup app).
   let team: TeamRef | null = null;
   if (teamParam) {
     const { data } = await getTournament();
-    const t = data.teamsById[teamParam];
-    if (t) team = { id: t.id, name: t.name, shortName: t.shortName, badge: t.badge };
+    const found = data.teamsById[teamParam];
+    if (found) team = { id: found.id, name: found.name, shortName: found.shortName, badge: found.badge };
   }
   if (!team) team = player.team;
 
   return (
     <div className={`container ${styles.page}`}>
       <Link href={team ? `/team/${team.id}` : "/teams"} className={styles.back}>
-        ← {team ? team.name : "All teams"}
+        ← {team ? team.name : t.player.allTeams}
       </Link>
 
       <header className={styles.head}>
@@ -90,19 +93,19 @@ export default async function PlayerPage({ params, searchParams }: Params) {
       </header>
 
       <section className={styles.factsCard}>
-        <h2 className={styles.sectionTitle}>Profile</h2>
+        <h2 className={styles.sectionTitle}>{t.player.profile}</h2>
         <div className={styles.facts}>
-          <Fact label="Position" value={player.position} />
-          <Fact label="Shirt Number" value={player.jersey ? `#${player.jersey}` : null} />
-          <Fact label="Age" value={player.age} />
+          <Fact label={t.player.position} value={player.position} />
+          <Fact label={t.player.shirtNumber} value={player.jersey ? `#${player.jersey}` : null} />
+          <Fact label={t.player.age} value={player.age} />
           <Fact
-            label="Date of Birth"
+            label={t.player.dateOfBirth}
             value={player.dateOfBirth ? formatLongDate(player.dateOfBirth) : null}
           />
-          <Fact label="Height" value={player.height} />
-          <Fact label="Weight" value={player.weight} />
-          <Fact label="Nationality" value={player.citizenship} />
-          <Fact label="Birthplace" value={player.birthPlace} />
+          <Fact label={t.player.height} value={player.height} />
+          <Fact label={t.player.weight} value={player.weight} />
+          <Fact label={t.player.nationality} value={player.citizenship} />
+          <Fact label={t.player.birthplace} value={player.birthPlace} />
         </div>
       </section>
     </div>

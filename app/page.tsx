@@ -1,4 +1,5 @@
 import { getTournament } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import { Hero } from "@/features/home/Hero/Hero";
 import { HomeBoard } from "@/features/home/HomeBoard/HomeBoard";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
@@ -7,11 +8,13 @@ import { OfflineBanner } from "@/components/ui/OfflineBanner/OfflineBanner";
 import { LiveStatus } from "@/components/live/LiveStatus/LiveStatus";
 import styles from "./page.module.scss";
 
-// Always render fresh; the API fetch itself is cached for 30s to shield the key.
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { data, fromFallback } = await getTournament();
+  const [{ data, fromFallback }, t] = await Promise.all([
+    getTournament(),
+    getServerT(),
+  ]);
 
   const latest = data.matches
     .filter((m) => m.status === "finished" || m.status === "live")
@@ -26,6 +29,7 @@ export default async function HomePage() {
           matchesPlayed: data.statistics.totals.matchesPlayed,
           goals: data.statistics.totals.goals,
         }}
+        t={t.hero}
       />
 
       <div className="container">
@@ -38,9 +42,9 @@ export default async function HomePage() {
         {latest.length > 0 && (
           <section className={styles.latest}>
             <SectionHeading
-              eyebrow="Match Centre"
-              title="Latest Results"
-              description="The most recent fixtures from across the tournament."
+              eyebrow={t.home.latestEyebrow}
+              title={t.home.latestTitle}
+              description={t.home.latestDesc}
             />
             <div className={styles.latestGrid}>
               {latest.map((m) => (
@@ -52,12 +56,12 @@ export default async function HomePage() {
 
         <section className={styles.boardSection}>
           <SectionHeading
-            eyebrow="Tournament Board"
-            title="Groups & Knockout Bracket"
-            description="All twelve groups flank the full knockout bracket. Open any group or tie for the full breakdown."
+            eyebrow={t.home.boardEyebrow}
+            title={t.home.boardTitle}
+            description={t.home.boardDesc}
             actions={<LiveStatus updatedAt={data.updatedAt} />}
           />
-          <HomeBoard groups={data.groups} bracket={data.bracket} />
+          <HomeBoard groups={data.groups} bracket={data.bracket} t={t.home} />
         </section>
       </div>
     </>

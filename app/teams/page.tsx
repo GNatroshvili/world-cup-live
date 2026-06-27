@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTournament } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import { GROUP_IDS } from "@/data/tournament";
 import { PageContainer } from "@/components/layout/PageContainer/PageContainer";
 import { TeamsExplorer } from "@/features/teams/TeamsExplorer/TeamsExplorer";
@@ -17,14 +18,17 @@ export default async function TeamsPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const { q } = await searchParams;
-  const { data } = await getTournament();
+  const [{ q }, { data }, t] = await Promise.all([
+    searchParams,
+    getTournament(),
+    getServerT(),
+  ]);
 
   return (
     <PageContainer
-      eyebrow="Nations"
-      title="Participating Teams"
-      description="The 48 nations contesting the first 48-team World Cup, hosted across the USA, Canada and Mexico."
+      eyebrow={t.teams.pageEyebrow}
+      title={t.teams.pageTitle}
+      description={t.teams.pageDesc}
     >
       <TeamsExplorer teams={data.teams} groups={[...GROUP_IDS]} initialQuery={q ?? ""} />
     </PageContainer>

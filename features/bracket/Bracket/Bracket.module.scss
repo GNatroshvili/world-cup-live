@@ -71,11 +71,6 @@ $connector: 16px;
   min-height: 64px;
 }
 
-// --- connector lines ---------------------------------------------------------
-// Horizontal stub leaving each card to the right.
-// Forward elbow: a horizontal line leaving the card at its centre, turning into
-// a vertical line that runs to the midpoint shared with the card's pair.
-// Lives entirely within the column's right padding ($connector wide).
 .round:not(.final) .slot::after {
   content: "";
   position: absolute;
@@ -98,8 +93,6 @@ $connector: 16px;
   border-bottom-right-radius: 8px;
 }
 
-// Incoming stub: a short horizontal line bridging the join to the next card.
-// Applied to every round except the first (Round of 32).
 .round:not(.r32) .slot::before {
   content: "";
   position: absolute;
@@ -110,15 +103,12 @@ $connector: 16px;
   background: var(--border-strong);
 }
 
-// Single-final column needs no outgoing connectors.
 .final .matches {
   justify-content: center;
 }
 
-// First-round / final markers (so :not(.r32)/.final selectors resolve).
 .r32 { z-index: 0; }
 
-// --- third place -------------------------------------------------------------
 .third {
   margin-top: var(--space-5);
   padding-top: var(--space-4);
@@ -126,7 +116,6 @@ $connector: 16px;
   max-width: 220px;
 }
 
-// Tighter columns on small screens.
 @include respond-below("md") {
   .round {
     padding: 0 12px;

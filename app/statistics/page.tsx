@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTournament } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import { PageContainer } from "@/components/layout/PageContainer/PageContainer";
 import { Leaderboard } from "@/features/statistics/Leaderboard/Leaderboard";
 import { DetailedStatsSections } from "@/features/statistics/DetailedStatsSections/DetailedStatsSections";
@@ -34,44 +35,44 @@ function DetailedStatsSkeleton() {
 }
 
 export default async function StatisticsPage() {
-  const { data } = await getTournament();
+  const [{ data }, t] = await Promise.all([getTournament(), getServerT()]);
   const s = data.statistics;
 
   const totals = [
-    { label: "Teams", value: s.totals.teams },
-    { label: "Matches Played", value: s.totals.matchesPlayed },
-    { label: "Goals Scored", value: s.totals.goals },
-    { label: "Goals / Match", value: s.totals.averageGoalsPerMatch },
-    { label: "Clean Sheets", value: s.totals.cleanSheets },
-    { label: "Fixtures", value: s.totals.matchesScheduled },
+    { label: t.statistics.totalTeams, value: s.totals.teams },
+    { label: t.statistics.totalMatchesPlayed, value: s.totals.matchesPlayed },
+    { label: t.statistics.totalGoals, value: s.totals.goals },
+    { label: t.statistics.totalGoalsPerMatch, value: s.totals.averageGoalsPerMatch },
+    { label: t.statistics.totalCleanSheets, value: s.totals.cleanSheets },
+    { label: t.statistics.totalFixtures, value: s.totals.matchesScheduled },
   ];
 
   return (
     <PageContainer
-      eyebrow="By the Numbers"
-      title="Tournament Statistics"
-      description="Live leaderboards computed from match results. Figures grow as the tournament progresses."
+      eyebrow={t.statistics.pageEyebrow}
+      title={t.statistics.pageTitle}
+      description={t.statistics.pageDesc}
       actions={<LiveStatus updatedAt={data.updatedAt} />}
     >
       <div className={styles.totals}>
-        {totals.map((t) => (
-          <div key={t.label} className={styles.totalCard}>
-            <span className={styles.totalValue}>{t.value}</span>
-            <span className={styles.totalLabel}>{t.label}</span>
+        {totals.map((total) => (
+          <div key={total.label} className={styles.totalCard}>
+            <span className={styles.totalValue}>{total.value}</span>
+            <span className={styles.totalLabel}>{total.label}</span>
           </div>
         ))}
       </div>
 
       <div className={styles.grid}>
-        <Leaderboard title="Most Goals Scored" leaders={s.mostGoals} accent="gold" />
-        <Leaderboard title="Most Wins" leaders={s.mostWins} accent="primary" />
+        <Leaderboard title={t.statistics.mostGoals} leaders={s.mostGoals} accent="gold" />
+        <Leaderboard title={t.statistics.mostWins} leaders={s.mostWins} accent="primary" />
         <Leaderboard
-          title="Best Goal Difference"
+          title={t.statistics.bestGD}
           leaders={s.bestGoalDifference}
           accent="violet"
         />
-        <Leaderboard title="Most Clean Sheets" leaders={s.mostCleanSheets} accent="primary" />
-        <Leaderboard title="Most Matches Played" leaders={s.mostPlayed} accent="violet" />
+        <Leaderboard title={t.statistics.mostCleanSheets} leaders={s.mostCleanSheets} accent="primary" />
+        <Leaderboard title={t.statistics.mostPlayed} leaders={s.mostPlayed} accent="violet" />
       </div>
 
       <Suspense fallback={<DetailedStatsSkeleton />}>
@@ -79,7 +80,7 @@ export default async function StatisticsPage() {
       </Suspense>
 
       <section className={styles.highest}>
-        <h2 className={styles.sectionTitle}>Highest-Scoring Matches</h2>
+        <h2 className={styles.sectionTitle}>{t.statistics.highestScoring}</h2>
         {s.highestScoringMatches.length > 0 ? (
           <div className={styles.matchGrid}>
             {s.highestScoringMatches.map((m) => (
@@ -88,8 +89,8 @@ export default async function StatisticsPage() {
           </div>
         ) : (
           <EmptyState
-            title="No matches played yet"
-            description="The goal-fest leaderboard will populate once games begin."
+            title={t.statistics.noMatches}
+            description={t.statistics.noMatchesDesc}
           />
         )}
       </section>

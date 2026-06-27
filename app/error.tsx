@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/Button/Button";
+import { useT } from "@/components/providers/I18nProvider";
 import styles from "./error.module.scss";
 
 export default function Error({
@@ -11,21 +12,19 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useT();
+
   useEffect(() => {
-    // Surface in server/client logs for diagnostics.
     console.error(error);
   }, [error]);
 
   return (
     <div className={`container ${styles.wrap}`}>
-      <span className={styles.code}>Something went wrong</span>
-      <h1 className={styles.title}>We couldn’t load this view</h1>
-      <p className={styles.desc}>
-        The live data feed may be temporarily unavailable. Please try again in a
-        moment.
-      </p>
+      <span className={styles.code}>{t.common.error}</span>
+      <h1 className={styles.title}>{t.common.error}</h1>
+      <p className={styles.desc}>{t.common.offline}</p>
       <div className={styles.actions}>
-        <Button onClick={reset}>Try again</Button>
+        <Button onClick={reset}>{t.common.tryAgain}</Button>
       </div>
     </div>
   );

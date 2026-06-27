@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useFantasyStore } from "@/store/fantasyStore";
+import { useT } from "@/components/providers/I18nProvider";
 import {
   KNOCKOUT_POINTS,
   POINTS,
@@ -129,6 +130,7 @@ const ROUND_POINTS: Record<KnockoutStage, number> = KNOCKOUT_POINTS;
 
 export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
   const store = useFantasyStore();
+  const t = useT();
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -149,15 +151,22 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
     [store.groupWinners, store.knockoutWinners, actuals],
   );
 
-  // The Final pick is the predicted champion.
   const predictedChampion = useMemo(() => {
     const finalFx = knockoutRounds.find((r) => r.stage === "final")?.matches[0];
     if (!finalFx) return null;
     const pick = store.knockoutWinners[finalFx.matchId];
     if (!pick) return null;
     const side = pick === "home" ? finalFx.home : finalFx.away;
-    return side ? side.name : "the Final winner";
-  }, [knockoutRounds, store.knockoutWinners]);
+    return side ? side.name : t.fantasy.pickChampion;
+  }, [knockoutRounds, store.knockoutWinners, t]);
+
+  const knockoutHint = t.fantasy.knockoutHint
+    .replace("{r32}", String(ROUND_POINTS.r32))
+    .replace("{r16}", String(ROUND_POINTS.r16))
+    .replace("{qf}", String(ROUND_POINTS.qf))
+    .replace("{sf}", String(ROUND_POINTS.sf))
+    .replace("{third}", String(ROUND_POINTS.third))
+    .replace("{final}", String(ROUND_POINTS.final));
 
   if (!hydrated) {
     return (
@@ -178,22 +187,22 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
       >
         <div className={styles.scoreMain}>
           <span className={styles.scoreValue}>{score.earned}</span>
-          <span className={styles.scoreMax}>/ {score.max} pts</span>
+          <span className={styles.scoreMax}>/ {score.max} {t.fantasy.pts}</span>
         </div>
         <div className={styles.scoreMeta}>
           <div>
             <span className={styles.metaValue}>{score.correctCount}</span>
-            <span className={styles.metaLabel}>correct picks</span>
+            <span className={styles.metaLabel}>{t.fantasy.correctPicks}</span>
           </div>
           <div>
             <span className={styles.metaValue}>{score.pending}</span>
-            <span className={styles.metaLabel}>pts still in play</span>
+            <span className={styles.metaLabel}>{t.fantasy.ptsInPlay}</span>
           </div>
           <label className={styles.nameField}>
-            <span className={styles.metaLabel}>Your name</span>
+            <span className={styles.metaLabel}>{t.fantasy.yourName}</span>
             <input
               type="text"
-              placeholder="e.g. Diego"
+              placeholder={t.fantasy.namePlaceholder}
               value={store.name}
               maxLength={24}
               onChange={(e) => store.setName(e.target.value)}
@@ -205,8 +214,8 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
       {/* --- group winners --- */}
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Group Winners</h2>
-          <p className={styles.sectionHint}>{POINTS.group} pts each</p>
+          <h2 className={styles.sectionTitle}>{t.fantasy.groupWinners}</h2>
+          <p className={styles.sectionHint}>{POINTS.group} {t.fantasy.pts} each</p>
         </div>
         <div className={styles.groups}>
           {groups.map((g) => {
@@ -216,32 +225,32 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
             return (
               <article key={g.id} className={styles.groupCard}>
                 <header className={styles.groupHead}>
-                  <span className={styles.groupName}>Group {g.id}</span>
+                  <span className={styles.groupName}>{t.fantasy.groupLabel} {g.id}</span>
                   <StatusDot status={status} />
                 </header>
                 <div className={styles.chips}>
-                  {g.teams.map((t) => {
-                    const selected = pick === t.id;
-                    const isActual = actual?.decided && actual.teamId === t.id;
+                  {g.teams.map((team) => {
+                    const selected = pick === team.id;
+                    const isActual = actual?.decided && actual.teamId === team.id;
                     return (
                       <button
-                        key={t.id}
+                        key={team.id}
                         type="button"
                         className={cn(
                           styles.chip,
                           selected && styles.chipSelected,
                           isActual && styles.chipActual,
                         )}
-                        onClick={() => store.setGroupWinner(g.id, t.id)}
+                        onClick={() => store.setGroupWinner(g.id, team.id)}
                       >
                         <TeamBadge
-                          name={t.name}
-                          code={t.shortName}
-                          badge={t.badge}
+                          name={team.name}
+                          code={team.shortName}
+                          badge={team.badge}
                           size="xs"
                         />
-                        <span className={styles.chipName}>{t.name}</span>
-                        {isActual && <span className={styles.actualTag}>winner</span>}
+                        <span className={styles.chipName}>{team.name}</span>
+                        {isActual && <span className={styles.actualTag}>{t.fantasy.winner}</span>}
                       </button>
                     );
                   })}
@@ -252,16 +261,12 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
         </div>
       </section>
 
-      {/* --- knockout / playoff winners (R32 → Final) --- */}
+      {/* --- knockout / playoff winners --- */}
       {knockoutRounds.length > 0 && (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>Knockout Bracket</h2>
-            <p className={styles.sectionHint}>
-              R32 {ROUND_POINTS.r32} · R16 {ROUND_POINTS.r16} · QF {ROUND_POINTS.qf} ·
-              SF {ROUND_POINTS.sf} · 3rd {ROUND_POINTS.third} · Final{" "}
-              {ROUND_POINTS.final} pts · tap who advances
-            </p>
+            <h2 className={styles.sectionTitle}>{t.fantasy.knockoutSection}</h2>
+            <p className={styles.sectionHint}>{knockoutHint}</p>
           </div>
           <div className={styles.koRounds}>
             {knockoutRounds.map((round) => (
@@ -296,17 +301,17 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
         <div className={styles.summaryText}>
           <strong>{store.name ? `${store.name}, ` : ""}</strong>
           {predictedChampion
-            ? `you’ve backed ${predictedChampion} to lift the trophy.`
-            : "pick your Final winner to crown your champion."}{" "}
-          Scores update automatically as results come in.
+            ? t.fantasy.backedChampion.replace("{name}", predictedChampion)
+            : t.fantasy.pickChampion}{" "}
+          {t.fantasy.scoresUpdate}
         </div>
         <Button
           variant="subtle"
           onClick={() => {
-            if (window.confirm("Clear all your predictions?")) store.reset();
+            if (window.confirm(t.fantasy.clearConfirm)) store.reset();
           }}
         >
-          Reset predictions
+          {t.fantasy.resetBtn}
         </Button>
       </section>
     </div>

@@ -5,6 +5,7 @@ import { TeamCard } from "../TeamCard/TeamCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { cn } from "@/utils/cn";
 import { useUIStore } from "@/store/uiStore";
+import { useT } from "@/components/providers/I18nProvider";
 import type { GroupId, Team } from "@/types";
 import styles from "./TeamsExplorer.module.scss";
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
+  const t = useT();
   // The store's searchQuery is the single source of truth, so the header
   // search field and this page's input stay in sync automatically.
   const query = useUIStore((s) => s.searchQuery);
@@ -31,13 +33,13 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return teams
-      .filter((t) => (group === "all" ? true : t.group === group))
+      .filter((team) => (group === "all" ? true : team.group === group))
       .filter(
-        (t) =>
+        (team) =>
           !q ||
-          t.name.toLowerCase().includes(q) ||
-          t.shortName.toLowerCase().includes(q) ||
-          (t.country ?? "").toLowerCase().includes(q),
+          team.name.toLowerCase().includes(q) ||
+          team.shortName.toLowerCase().includes(q) ||
+          (team.country ?? "").toLowerCase().includes(q),
       )
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [teams, query, group]);
@@ -53,9 +55,9 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
           <input
             type="search"
             value={query}
-            placeholder="Search by team or country…"
+            placeholder={t.common.searchTeams}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search teams"
+            aria-label={t.common.searchTeams}
           />
         </div>
 
@@ -64,7 +66,7 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
             className={cn(styles.chip, group === "all" && styles.chipActive)}
             onClick={() => setGroup("all")}
           >
-            All
+            {t.teams.allGroups}
           </button>
           {groups.map((g) => (
             <button
@@ -79,19 +81,19 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
       </div>
 
       <p className={styles.count}>
-        {filtered.length} {filtered.length === 1 ? "team" : "teams"}
+        {filtered.length} {filtered.length === 1 ? t.teams.group : t.teams.group}
       </p>
 
       {filtered.length > 0 ? (
         <div className={styles.grid}>
-          {filtered.map((t) => (
-            <TeamCard key={t.id} team={t} />
+          {filtered.map((team) => (
+            <TeamCard key={team.id} team={team} />
           ))}
         </div>
       ) : (
         <EmptyState
-          title="No teams match your search"
-          description="Try another name, country, or group."
+          title={t.teams.noResults}
+          description={t.teams.noResultsDesc}
         />
       )}
     </div>

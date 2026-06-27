@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTournament } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import { GROUP_IDS } from "@/data/tournament";
 import { PageContainer } from "@/components/layout/PageContainer/PageContainer";
 import { MatchesExplorer } from "@/features/matches/MatchesExplorer/MatchesExplorer";
@@ -23,18 +24,21 @@ export default async function MatchesPage({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const { status } = await searchParams;
+  const [{ status }, { data, fromFallback }, t] = await Promise.all([
+    searchParams,
+    getTournament(),
+    getServerT(),
+  ]);
+
   const initialStatus = VALID.includes(status as StatusFilter)
     ? (status as StatusFilter)
     : "all";
 
-  const { data, fromFallback } = await getTournament();
-
   return (
     <PageContainer
-      eyebrow="Match Centre"
-      title="Fixtures & Results"
-      description="Follow every tie across the group stage and knockout rounds. Filter by status or group and sort by date."
+      eyebrow={t.matches.pageEyebrow}
+      title={t.matches.pageTitle}
+      description={t.matches.pageDesc}
       actions={<LiveStatus updatedAt={data.updatedAt} />}
     >
       {fromFallback && (

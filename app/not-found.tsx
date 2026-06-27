@@ -1,19 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/Button/Button";
+import { useT } from "@/components/providers/I18nProvider";
 import styles from "./error.module.scss";
 
 export default function NotFound() {
+  const t = useT();
   return (
     <div className={`container ${styles.wrap}`}>
       <span className={styles.code}>404</span>
-      <h1 className={styles.title}>This page is offside</h1>
-      <p className={styles.desc}>
-        The page you’re looking for doesn’t exist or has been moved. Let’s get you
-        back to the action.
-      </p>
+      <h1 className={styles.title}>{t.common.notFound}</h1>
+      <p className={styles.desc}>{t.common.notFoundDesc}</p>
       <div className={styles.actions}>
         <Link href="/">
-          <Button>Back to dashboard</Button>
+          <Button>{t.common.backHome}</Button>
         </Link>
       </div>
     </div>

@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import { ModalHost } from "@/components/layout/ModalHost/ModalHost";
+import { Providers } from "@/components/providers/Providers";
+import { getServerLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/index";
 import "./globals.scss";
 
 const geistSans = Geist({
@@ -55,21 +59,42 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#06070d",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#06070d" },
+    { media: "(prefers-color-scheme: light)", color: "#f0f2f8" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getServerLocale();
+  const dict = await getDictionary(locale);
+
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}else{document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <ModalHost />
+        <Providers locale={locale} dict={dict}>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <ModalHost />
+        </Providers>
       </body>
     </html>
   );

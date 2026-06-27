@@ -1,5 +1,8 @@
+"use client";
+
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { useT } from "@/components/providers/I18nProvider";
 import { cn } from "@/utils/cn";
 import type { StatLeader } from "@/types";
 import styles from "./Leaderboard.module.scss";
@@ -12,11 +15,12 @@ interface Props {
 }
 
 export function Leaderboard({ title, unit, leaders, accent = "primary" }: Props) {
+  const t = useT();
   return (
     <section className={cn(styles.card, styles[accent])}>
       <h3 className={styles.title}>{title}</h3>
       {leaders.length === 0 ? (
-        <EmptyState title="No data yet" description="Stats build up as matches are played." />
+        <EmptyState title={t.detailedStats.noData} description={t.detailedStats.noDataDesc} />
       ) : (
         <ol className={styles.list}>
           {leaders.map((l, i) => (

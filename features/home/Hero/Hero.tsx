@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button/Button";
+import type { Dict } from "@/lib/i18n/en";
 import styles from "./Hero.module.scss";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
     matchesPlayed: number;
     goals: number;
   };
+  t: Dict["hero"];
 }
 
 const fade = {
@@ -22,12 +24,12 @@ const fade = {
   }),
 };
 
-export function Hero({ totals }: Props) {
+export function Hero({ totals, t }: Props) {
   const stats = [
-    { label: "Nations", value: totals.teams || 48 },
-    { label: "Matches Played", value: totals.matchesPlayed },
-    { label: "Goals", value: totals.goals },
-    { label: "Host Countries", value: 3 },
+    { label: t.nations, value: totals.teams || 48 },
+    { label: t.matchesPlayed, value: totals.matchesPlayed },
+    { label: t.goals, value: totals.goals },
+    { label: t.hostCountries, value: 3 },
   ];
 
   return (
@@ -41,7 +43,7 @@ export function Hero({ totals }: Props) {
           initial="hidden"
           animate="show"
         >
-          United 2026 · USA · Canada · Mexico
+          {t.badge}
         </motion.span>
 
         <motion.h1
@@ -51,9 +53,9 @@ export function Hero({ totals }: Props) {
           initial="hidden"
           animate="show"
         >
-          The <span className={styles.grad}>FIFA World Cup</span>
+          The <span className={styles.grad}>{t.titleAccent}</span>
           <br />
-          Live Command Centre
+          {t.titleSuffix}
         </motion.h1>
 
         <motion.p
@@ -63,8 +65,7 @@ export function Hero({ totals }: Props) {
           initial="hidden"
           animate="show"
         >
-          Group standings, live results, the complete knockout bracket and deep
-          tournament statistics — all in one premium dashboard.
+          {t.lead}
         </motion.p>
 
         <motion.div
@@ -75,11 +76,11 @@ export function Hero({ totals }: Props) {
           animate="show"
         >
           <Link href="#bracket">
-            <Button size="lg">View the Bracket</Button>
+            <Button size="lg">{t.viewBracket}</Button>
           </Link>
           <Link href="/matches">
             <Button size="lg" variant="outline">
-              Match Centre
+              {t.matchCentre}
             </Button>
           </Link>
         </motion.div>

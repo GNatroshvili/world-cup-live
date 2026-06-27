@@ -1,38 +1,37 @@
+"use client";
+
 import { cn } from "@/utils/cn";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { FormPills } from "@/components/ui/FormPills/FormPills";
+import { useT } from "@/components/providers/I18nProvider";
 import type { Standing } from "@/types";
 import styles from "./StandingsTable.module.scss";
 
 interface Props {
   standings: Standing[];
-  /** "compact" hides per-result columns (used on cards). */
   variant?: "compact" | "full";
-  /** highlight the top N qualification places. */
   qualifyCount?: number;
 }
 
-export function StandingsTable({
-  standings,
-  variant = "compact",
-  qualifyCount = 2,
-}: Props) {
+export function StandingsTable({ standings, variant = "compact", qualifyCount = 2 }: Props) {
+  const t = useT();
   const full = variant === "full";
+
   return (
     <table className={cn(styles.table, full && styles.full)}>
       <thead>
         <tr>
-          <th className={styles.pos}>#</th>
-          <th className={styles.team}>Team</th>
-          <th>P</th>
-          {full && <th>W</th>}
-          {full && <th>D</th>}
-          {full && <th>L</th>}
-          {full && <th>GF</th>}
-          {full && <th>GA</th>}
-          <th>GD</th>
-          <th className={styles.pts}>Pts</th>
-          {full && <th className={styles.form}>Form</th>}
+          <th className={styles.pos}>{t.standings.pos}</th>
+          <th className={styles.team}>{t.standings.team}</th>
+          <th>{t.standings.played}</th>
+          {full && <th>{t.standings.won}</th>}
+          {full && <th>{t.standings.drawn}</th>}
+          {full && <th>{t.standings.lost}</th>}
+          {full && <th>{t.standings.gf}</th>}
+          {full && <th>{t.standings.ga}</th>}
+          <th>{t.standings.gd}</th>
+          <th className={styles.pts}>{t.standings.pts}</th>
+          {full && <th className={styles.form}>{t.standings.form}</th>}
         </tr>
       </thead>
       <tbody>

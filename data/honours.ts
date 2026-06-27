@@ -1,5 +1,3 @@
-// FIFA World Cup winners (historical fact). Used to show "World Cup Titles" on
-// team pages; nations with none simply show no honours.
 import type { WorldCupHonours } from "@/types";
 
 const TITLES: Record<string, WorldCupHonours> = {

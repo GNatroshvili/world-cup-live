@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMatchDetail } from "@/lib/worldcup";
 
-// Goal timeline + team stats for one match, fetched lazily when its modal opens.
 export const revalidate = 120;
 
 export async function GET(

@@ -65,7 +65,9 @@
   font-size: 0.92rem;
   font-weight: 500;
   color: var(--text-muted);
-  transition: color var(--ease-fast), background var(--ease-fast);
+  transition:
+    color var(--ease-fast),
+    background var(--ease-fast);
 
   &:hover {
     color: var(--text);
@@ -155,13 +157,21 @@
     background: var(--text);
     transition: transform var(--ease);
   }
-  &::before { top: -6px; }
-  &::after { top: 6px; }
+  &::before {
+    top: -6px;
+  }
+  &::after {
+    top: 6px;
+  }
 
   &.open {
     background: transparent;
-    &::before { transform: translateY(6px) rotate(45deg); }
-    &::after { transform: translateY(-6px) rotate(-45deg); }
+    &::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+    &::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
   }
 }
 
@@ -209,4 +219,82 @@
       border-color: var(--primary);
     }
   }
+}
+
+.controls {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+
+  @include respond("md") {
+    display: flex;
+  }
+}
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    color var(--ease-fast),
+    background var(--ease-fast),
+    border-color var(--ease-fast);
+
+  &:hover {
+    color: var(--text);
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+}
+
+.langSwitch {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.langBtn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-1);
+  cursor: pointer;
+  transition:
+    color var(--ease-fast),
+    background var(--ease-fast);
+  line-height: 1;
+  height: 34px;
+
+  &:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  & + & {
+    border-left: 1px solid var(--border);
+  }
+}
+
+.langActive {
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-weight: 700;
+}
+
+.mobileControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
 }

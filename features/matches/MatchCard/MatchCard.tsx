@@ -1,6 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/store/uiStore";
+import { useT } from "@/components/providers/I18nProvider";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { cn } from "@/utils/cn";
@@ -13,13 +14,7 @@ interface Props {
   showGroup?: boolean;
 }
 
-function TeamSide({
-  match,
-  side,
-}: {
-  match: Match;
-  side: "home" | "away";
-}) {
+function TeamSide({ match, side }: { match: Match; side: "home" | "away" }) {
   const team = side === "home" ? match.home : match.away;
   const label = side === "home" ? match.homeLabel : match.awayLabel;
   return (
@@ -31,9 +26,7 @@ function TeamSide({
         </>
       ) : (
         <>
-          <span className={styles.tbd} aria-hidden>
-            ?
-          </span>
+          <span className={styles.tbd} aria-hidden>?</span>
           <span className={styles.teamName}>{label ?? "TBD"}</span>
         </>
       )}
@@ -43,6 +36,7 @@ function TeamSide({
 
 export function MatchCard({ match, showGroup }: Props) {
   const openMatch = useUIStore((s) => s.openMatch);
+  const t = useT();
   const played = match.status === "finished" || match.status === "live";
 
   return (
@@ -53,7 +47,7 @@ export function MatchCard({ match, showGroup }: Props) {
     >
       <div className={styles.top}>
         <span className={styles.round}>
-          {showGroup && match.group ? `Group ${match.group} · ` : ""}
+          {showGroup && match.group ? `${t.matches.groupLabel} ${match.group} · ` : ""}
           {match.roundLabel}
         </span>
         <StatusBadge status={match.status} />
@@ -68,7 +62,7 @@ export function MatchCard({ match, showGroup }: Props) {
       </div>
 
       <div className={styles.foot}>
-        <span>{formatKickoff(match.kickoff)}</span>
+        <span>{formatKickoff(match.kickoff, t.status.scheduleTbd)}</span>
         {match.venue && <span className={styles.venue}>{match.venue}</span>}
       </div>
     </button>

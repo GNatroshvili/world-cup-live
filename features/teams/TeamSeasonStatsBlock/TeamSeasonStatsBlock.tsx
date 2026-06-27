@@ -1,28 +1,28 @@
 import { getTeamSeasonStats } from "@/lib/worldcup";
+import { getServerT } from "@/lib/i18n/server";
 import styles from "./TeamSeasonStatsBlock.module.scss";
 
 interface Props {
   teamId: string;
 }
 
-/** Team performance — average possession, shots, passing etc. across matches. */
 export async function TeamSeasonStatsBlock({ teamId }: Props) {
-  const stats = await getTeamSeasonStats(teamId);
+  const [stats, t] = await Promise.all([getTeamSeasonStats(teamId), getServerT()]);
   if (!stats || stats.matches === 0) return null;
 
   const items = [
-    { label: "Avg Possession", value: `${stats.avgPossession}%` },
-    { label: "Total Shots", value: stats.totalShots },
-    { label: "Shots on Target", value: stats.shotsOnTarget },
-    { label: "Passes", value: stats.totalPasses },
-    { label: "Pass Accuracy", value: `${stats.passAccuracy}%` },
-    { label: "Corners", value: stats.corners },
+    { label: t.teamStats.avgPossession, value: `${stats.avgPossession}%` },
+    { label: t.teamStats.totalShots, value: stats.totalShots },
+    { label: t.teamStats.shotsOnTarget, value: stats.shotsOnTarget },
+    { label: t.teamStats.passes, value: stats.totalPasses },
+    { label: t.teamStats.passAccuracy, value: `${stats.passAccuracy}%` },
+    { label: t.teamStats.corners, value: stats.corners },
   ];
 
   return (
     <section>
       <h2 className={styles.title}>
-        Performance <span className={styles.sub}>· {stats.matches} matches</span>
+        {t.teamStats.performance} <span className={styles.sub}>· {stats.matches} matches</span>
       </h2>
       <div className={styles.grid}>
         {items.map((it) => (
@@ -35,7 +35,7 @@ export async function TeamSeasonStatsBlock({ teamId }: Props) {
 
       {stats.perMatch.length > 0 && (
         <div className={styles.poss}>
-          <span className={styles.possTitle}>Possession by match</span>
+          <span className={styles.possTitle}>{t.teamStats.possessionByMatch}</span>
           <div className={styles.possRows}>
             {stats.perMatch.map((m) => (
               <div key={m.matchId} className={styles.possRow}>

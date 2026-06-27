@@ -1,27 +1,32 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/utils/cn";
+import { useT } from "@/components/providers/I18nProvider";
 import styles from "./Footer.module.scss";
 
-const LINKS = [
-  {
-    title: "Tournament",
-    items: [
-      { href: "/", label: "Groups & Bracket" },
-      { href: "/matches", label: "Match Centre" },
-      { href: "/statistics", label: "Statistics" },
-    ],
-  },
-  {
-    title: "Explore",
-    items: [
-      { href: "/teams", label: "All Teams" },
-      { href: "/#bracket", label: "Knockout Bracket" },
-      { href: "/matches?status=live", label: "Live Now" },
-    ],
-  },
-];
-
 export function Footer() {
+  const t = useT();
+
+  const LINKS = [
+    {
+      title: t.footer.tournamentTitle,
+      items: [
+        { href: "/", label: t.footer.groupsAndBracket },
+        { href: "/matches", label: t.footer.matchCentre },
+        { href: "/statistics", label: t.footer.statistics },
+      ],
+    },
+    {
+      title: t.footer.exploreTitle,
+      items: [
+        { href: "/teams", label: t.footer.allTeams },
+        { href: "/#bracket", label: t.footer.knockoutBracket },
+        { href: "/matches?status=live", label: t.footer.liveNow },
+      ],
+    },
+  ];
+
   return (
     <footer className={styles.footer}>
       <div className={cn("container", styles.inner)}>
@@ -45,9 +50,9 @@ export function Footer() {
         ))}
 
         <div className={styles.col}>
-          <p className={styles.colTitle}>Data</p>
+          <p className={styles.colTitle}>{t.footer.dataTitle}</p>
           <p className={styles.attrib}>
-            Live scores & standings from{" "}
+            {t.footer.dataAttrib1}{" "}
             <a
               href="https://www.espn.com/soccer/"
               target="_blank"
@@ -56,7 +61,7 @@ export function Footer() {
             >
               ESPN
             </a>
-            ; team profiles from{" "}
+            {t.footer.dataAttrib2}{" "}
             <a
               href="https://www.thesportsdb.com"
               target="_blank"
@@ -71,8 +76,7 @@ export function Footer() {
       </div>
 
       <div className={cn("container", styles.bottom)}>
-        <p>© 2026 World Cup Live. An unofficial fan project.</p>
-        <p>Built with Next.js · Not affiliated with FIFA.</p>
+        <p>{t.footer.copyright}</p>
       </div>
     </footer>
   );

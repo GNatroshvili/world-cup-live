@@ -4,6 +4,7 @@ import { Modal } from "@/components/ui/Modal/Modal";
 import { StandingsTable } from "../StandingsTable/StandingsTable";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { useT } from "@/components/providers/I18nProvider";
 import type { Group } from "@/types";
 import styles from "./GroupDetailsModal.module.scss";
 
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function GroupDetailsModal({ group, onClose }: Props) {
+  const t = useT();
   const played = group?.matches.filter(
     (m) => m.status === "finished" || m.status === "live",
   );
@@ -36,26 +38,24 @@ export function GroupDetailsModal({ group, onClose }: Props) {
             <div>
               <h2 className={styles.title}>{group.name}</h2>
               <p className={styles.sub}>
-                {group.standings.length} teams · {played?.length ?? 0} played ·{" "}
-                {goals ?? 0} goals
+                {group.standings.length} {t.group.teams} · {played?.length ?? 0} {t.group.played} · {goals ?? 0} {t.group.goals}
               </p>
             </div>
           </header>
 
           <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>Standings</h3>
+            <h3 className={styles.sectionTitle}>{t.group.standingsTitle}</h3>
             <div className={styles.tableWrap}>
               <StandingsTable standings={group.standings} variant="full" />
             </div>
             <p className={styles.legend}>
-              <span className={styles.legendDot} /> Top two advance to the
-              knockout stage
+              <span className={styles.legendDot} /> {t.group.advanceNote}
             </p>
           </section>
 
           <div className={styles.cols}>
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>Results</h3>
+              <h3 className={styles.sectionTitle}>{t.group.resultsTitle}</h3>
               {played && played.length > 0 ? (
                 <div className={styles.matchList}>
                   {played.map((m) => (
@@ -64,14 +64,14 @@ export function GroupDetailsModal({ group, onClose }: Props) {
                 </div>
               ) : (
                 <EmptyState
-                  title="No matches played yet"
-                  description="Results will appear here as the group games kick off."
+                  title={t.group.noMatchesYet}
+                  description={t.group.noMatchesDesc}
                 />
               )}
             </section>
 
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>Upcoming</h3>
+              <h3 className={styles.sectionTitle}>{t.group.upcomingTitle}</h3>
               {upcoming && upcoming.length > 0 ? (
                 <div className={styles.matchList}>
                   {upcoming.map((m) => (
@@ -79,7 +79,7 @@ export function GroupDetailsModal({ group, onClose }: Props) {
                   ))}
                 </div>
               ) : (
-                <EmptyState title="All group matches completed" />
+                <EmptyState title={t.group.allCompleted} />
               )}
             </section>
           </div>

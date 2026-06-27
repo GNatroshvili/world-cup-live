@@ -5,13 +5,13 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { cn } from "@/utils/cn";
+import { useT } from "@/components/providers/I18nProvider";
 import styles from "./Modal.module.scss";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
-  /** Accessible label for the dialog. */
   label?: string;
   size?: "md" | "lg";
   className?: string;
@@ -19,6 +19,7 @@ interface Props {
 
 export function Modal({ open, onClose, children, label, size = "md", className }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const t = useT();
   useScrollLock(open);
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export function Modal({ open, onClose, children, label, size = "md", className }
               type="button"
               className={styles.close}
               onClick={onClose}
-              aria-label="Close dialog"
+              aria-label={t.common.closeDialog}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path

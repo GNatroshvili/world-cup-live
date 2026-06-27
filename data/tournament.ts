@@ -1,20 +1,7 @@
-// =============================================================================
-// FIFA World Cup 2026 — structural seed data.
-//
-// IMPORTANT: This file contains only STATIC STRUCTURE (the group draw, the real
-// host venues, and the knockout template). It deliberately contains NO results,
-// scores or standings — those are fetched live from TheSportsDB and computed in
-// lib/worldcup.ts. The free API tier does not expose the 12-group draw or the
-// full 104-match calendar, so the structure is seeded here and ENRICHED with
-// live API data (badges, descriptions, venues, real scores) wherever available.
-// =============================================================================
-
 import type { GroupId } from "@/types";
 
 export interface SeedTeam {
-  /** Must match TheSportsDB `strTeam` for badge/description enrichment. */
   name: string;
-  /** FIFA 3-letter code. */
   code: string;
   country: string;
 }
@@ -29,7 +16,6 @@ export const GROUP_IDS: GroupId[] = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 ];
 
-/** The 16 confirmed host venues of the 2026 tournament (USA / Canada / Mexico). */
 export const HOST_VENUES: Venue[] = [
   { stadium: "Estadio Azteca", city: "Mexico City", country: "Mexico" },
   { stadium: "Estadio Akron", city: "Guadalajara", country: "Mexico" },
@@ -49,14 +35,7 @@ export const HOST_VENUES: Venue[] = [
   { stadium: "Arrowhead Stadium", city: "Kansas City", country: "USA" },
 ];
 
-/**
- * The group draw — 12 groups of 4. The three hosts head Groups A (Mexico),
- * B (Canada) and D (USA). Names match TheSportsDB so live badges/info attach.
- */
-// The official Final Draw (5 December 2025). Verified against TheSportsDB's
-// lookuptable/event data — every team the API places matches this draw, and the
-// opening fixtures are ordered so the real Matchday 1 pairings fall on MD1.
-// Team `name`s mirror TheSportsDB so live badges/info attach automatically.
+
 export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
   A: [
     { name: "Mexico", code: "MEX", country: "Mexico" },
@@ -132,16 +111,14 @@ export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
   ],
 };
 
-// --- Calendar anchors (UTC) --------------------------------------------------
-// Group stage: Jun 11–27, 2026. Knockouts: Jun 28 – Jul 19, 2026.
+
 export const GROUP_STAGE_START = "2026-06-11";
-export const MATCHDAY_OFFSETS_DAYS = [0, 7, 13]; // MD1, MD2, MD3 base offsets
+export const MATCHDAY_OFFSETS_DAYS = [0, 7, 13];
 
 export interface KnockoutSlotTemplate {
   id: string;
   homeLabel: string;
   awayLabel: string;
-  /** ISO date for the fixture (kickoff time appended in worldcup.ts). */
   date: string;
   venueIndex: number;
 }
@@ -152,10 +129,7 @@ export interface KnockoutRoundTemplate {
   slots: KnockoutSlotTemplate[];
 }
 
-/**
- * Knockout template. Slot labels (1A, 2B, …) describe qualification paths until
- * real teams are resolved from the computed group standings.
- */
+
 export const KNOCKOUT_TEMPLATE: KnockoutRoundTemplate[] = [
   {
     stage: "r32",

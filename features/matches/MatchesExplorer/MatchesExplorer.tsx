@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { MatchCard } from "../MatchCard/MatchCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { cn } from "@/utils/cn";
+import { useT } from "@/components/providers/I18nProvider";
 import type { GroupId, Match, MatchStatus } from "@/types";
 import styles from "./MatchesExplorer.module.scss";
 
@@ -17,13 +18,6 @@ interface Props {
   initialStatus?: StatusFilter;
 }
 
-const STATUS_TABS: { key: StatusFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "live", label: "Live" },
-  { key: "upcoming", label: "Upcoming" },
-  { key: "finished", label: "Completed" },
-];
-
 function matchesStatus(m: Match, f: StatusFilter): boolean {
   if (f === "all") return true;
   if (f === "live") return m.status === "live";
@@ -32,9 +26,17 @@ function matchesStatus(m: Match, f: StatusFilter): boolean {
 }
 
 export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Props) {
+  const t = useT();
   const [status, setStatus] = useState<StatusFilter>(initialStatus);
   const [group, setGroup] = useState<GroupId | "all">("all");
   const [sort, setSort] = useState<SortOrder>("newest");
+
+  const STATUS_TABS: { key: StatusFilter; label: string }[] = [
+    { key: "all", label: t.matches.all },
+    { key: "live", label: t.matches.live },
+    { key: "upcoming", label: t.matches.upcoming },
+    { key: "finished", label: t.matches.completed },
+  ];
 
   const filtered = useMemo(() => {
     const result = matches
@@ -62,16 +64,16 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
     <div className={styles.wrap}>
       <div className={styles.toolbar}>
         <div className={styles.tabs} role="tablist" aria-label="Filter by status">
-          {STATUS_TABS.map((t) => (
+          {STATUS_TABS.map((tab) => (
             <button
-              key={t.key}
+              key={tab.key}
               role="tab"
-              aria-selected={status === t.key}
-              className={cn(styles.tab, status === t.key && styles.tabActive)}
-              onClick={() => setStatus(t.key)}
+              aria-selected={status === tab.key}
+              className={cn(styles.tab, status === tab.key && styles.tabActive)}
+              onClick={() => setStatus(tab.key)}
             >
-              {t.label}
-              {t.key === "live" && counts.live > 0 && (
+              {tab.label}
+              {tab.key === "live" && counts.live > 0 && (
                 <span className={styles.liveDot} aria-hidden />
               )}
             </button>
@@ -80,29 +82,29 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
 
         <div className={styles.selects}>
           <label className={styles.select}>
-            <span>Group</span>
+            <span>{t.matches.allGroups.split(" ")[0]}</span>
             <select value={group} onChange={(e) => setGroup(e.target.value as GroupId | "all")}>
-              <option value="all">All groups</option>
+              <option value="all">{t.matches.allGroups}</option>
               {groups.map((g) => (
                 <option key={g} value={g}>
-                  Group {g}
+                  {t.matches.groupLabel} {g}
                 </option>
               ))}
             </select>
           </label>
 
           <label className={styles.select}>
-            <span>Sort</span>
+            <span>{t.matches.sort}</span>
             <select value={sort} onChange={(e) => setSort(e.target.value as SortOrder)}>
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
+              <option value="newest">{t.matches.newestFirst}</option>
+              <option value="oldest">{t.matches.oldestFirst}</option>
             </select>
           </label>
         </div>
       </div>
 
       <p className={styles.count}>
-        {filtered.length} {filtered.length === 1 ? "match" : "matches"}
+        {filtered.length} {filtered.length === 1 ? t.matches.match : t.matches.matches}
       </p>
 
       {filtered.length > 0 ? (
@@ -113,8 +115,8 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
         </motion.div>
       ) : (
         <EmptyState
-          title="No matches found"
-          description="Try a different status or group filter."
+          title={t.matches.noMatches}
+          description={t.matches.noMatchesDesc}
         />
       )}
     </div>

@@ -33,10 +33,13 @@ export function formatDate(iso: string | null): string {
   return Number.isNaN(d.getTime()) ? "TBD" : DATE_FMT.format(d);
 }
 
-export function formatLongDate(iso: string | null): string {
-  if (!iso) return "Date to be confirmed";
+export function formatLongDate(
+  iso: string | null,
+  fallback = "Date to be confirmed",
+): string {
+  if (!iso) return fallback;
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "Date to be confirmed" : DATE_LONG_FMT.format(d);
+  return Number.isNaN(d.getTime()) ? fallback : DATE_LONG_FMT.format(d);
 }
 
 export function formatTime(iso: string | null): string {
@@ -46,8 +49,11 @@ export function formatTime(iso: string | null): string {
 }
 
 /** Short kickoff descriptor used on cards, e.g. "Sat 14 Jun · 19:00". */
-export function formatKickoff(iso: string | null): string {
-  if (!iso) return "Schedule TBD";
+export function formatKickoff(
+  iso: string | null,
+  fallback = "Schedule TBD",
+): string {
+  if (!iso) return fallback;
   return `${formatDate(iso)} · ${formatTime(iso)}`;
 }
 
@@ -65,11 +71,10 @@ export function statusLabel(status: MatchStatus): string {
 }
 
 /** "2 - 0" for played matches, "vs" otherwise. */
-export function scoreline(match: Pick<Match, "homeScore" | "awayScore" | "status">): string {
-  if (
-    match.status === "finished" ||
-    match.status === "live"
-  ) {
+export function scoreline(
+  match: Pick<Match, "homeScore" | "awayScore" | "status">,
+): string {
+  if (match.status === "finished" || match.status === "live") {
     if (match.homeScore != null && match.awayScore != null) {
       return `${match.homeScore} - ${match.awayScore}`;
     }

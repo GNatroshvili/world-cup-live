@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useUIStore } from "@/store/uiStore";
+import { useT } from "@/components/providers/I18nProvider";
 import { StandingsTable } from "../StandingsTable/StandingsTable";
 import type { Group } from "@/types";
 import styles from "./GroupCard.module.scss";
@@ -13,6 +14,7 @@ interface Props {
 
 export function GroupCard({ group, index = 0 }: Props) {
   const openGroup = useUIStore((s) => s.openGroup);
+  const t = useT();
   const playedCount = group.matches.filter((m) => m.status === "finished").length;
 
   return (
@@ -30,7 +32,7 @@ export function GroupCard({ group, index = 0 }: Props) {
         <div className={styles.headText}>
           <h3 className={styles.title}>{group.name}</h3>
           <p className={styles.meta}>
-            {playedCount}/{group.matches.length} played
+            {playedCount}/{group.matches.length} {t.group.played}
           </p>
         </div>
       </header>
@@ -44,7 +46,7 @@ export function GroupCard({ group, index = 0 }: Props) {
         className={styles.details}
         onClick={() => openGroup(group)}
       >
-        View Details
+        {t.group.viewDetails}
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
           <path
             d="M9 6l6 6-6 6"

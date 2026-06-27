@@ -1,5 +1,8 @@
+"use client";
+
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { useT } from "@/components/providers/I18nProvider";
 import type { TeamStatRow } from "@/types";
 import styles from "./TeamStatsTable.module.scss";
 
@@ -8,11 +11,13 @@ interface Props {
 }
 
 export function TeamStatsTable({ rows }: Props) {
+  const t = useT();
+
   if (rows.length === 0) {
     return (
       <EmptyState
-        title="No team statistics yet"
-        description="Per-team stats build up from match data as games are played."
+        title={t.detailedStats.noTeamStats}
+        description={t.detailedStats.noTeamStatsDesc}
       />
     );
   }
@@ -21,14 +26,14 @@ export function TeamStatsTable({ rows }: Props) {
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.team}>Team</th>
+            <th className={styles.team}>{t.detailedStats.teamCol}</th>
             <th>P</th>
             <th>GF</th>
-            <th>Shots</th>
-            <th>On Target</th>
-            <th>Poss %</th>
-            <th>Passes</th>
-            <th>Corners</th>
+            <th>{t.detailedStats.shotsCol}</th>
+            <th>{t.detailedStats.onTargetCol}</th>
+            <th>{t.detailedStats.possCol}</th>
+            <th>{t.detailedStats.passesCol}</th>
+            <th>{t.detailedStats.cornersCol}</th>
           </tr>
         </thead>
         <tbody>

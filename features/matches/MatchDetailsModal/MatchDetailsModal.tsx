@@ -6,6 +6,7 @@ import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { formatLongDate, formatTime, scoreline } from "@/utils/format";
 import { MatchDetailPanel } from "@/features/matches/MatchDetailPanel/MatchDetailPanel";
+import { useT } from "@/components/providers/I18nProvider";
 import type { Match } from "@/types";
 import styles from "./MatchDetailsModal.module.scss";
 
@@ -14,7 +15,7 @@ interface Props {
   onClose: () => void;
 }
 
-function Side({ team, label }: { team: Match["home"]; label?: string }) {
+function Side({ team, label, tbd }: { team: Match["home"]; label?: string; tbd: string }) {
   return (
     <div className={styles.side}>
       {team ? (
@@ -28,7 +29,7 @@ function Side({ team, label }: { team: Match["home"]; label?: string }) {
           <span className={styles.sideTbd} aria-hidden>
             ?
           </span>
-          <span className={styles.sideName}>{label ?? "To be decided"}</span>
+          <span className={styles.sideName}>{label ?? tbd}</span>
         </>
       )}
     </div>
@@ -46,10 +47,11 @@ function Detail({ label, value }: { label: string; value: string | null | undefi
 }
 
 export function MatchDetailsModal({ match, onClose }: Props) {
+  const t = useT();
   const played = match?.status === "finished" || match?.status === "live";
 
   return (
-    <Modal open={Boolean(match)} onClose={onClose} size="md" label="Match details">
+    <Modal open={Boolean(match)} onClose={onClose} size="md" label={t.matchDetail.modalLabel}>
       {match && (
         <div className={styles.wrap}>
           {match.poster || match.thumb ? (
@@ -67,31 +69,35 @@ export function MatchDetailsModal({ match, onClose }: Props) {
 
           <div className={styles.topRow}>
             <span className={styles.round}>
-              {match.group ? `Group ${match.group} · ` : ""}
+              {match.group ? `${t.matches.groupLabel} ${match.group} · ` : ""}
               {match.roundLabel}
             </span>
             <StatusBadge status={match.status} />
           </div>
 
           <div className={styles.scoreboard}>
-            <Side team={match.home} label={match.homeLabel} />
+            <Side team={match.home} label={match.homeLabel} tbd={t.matchDetail.toBeDecided} />
             <div className={styles.center}>
               <span className={styles.score}>{scoreline(match)}</span>
               <span className={styles.kickoff}>
-                {played ? formatTime(match.kickoff) : "Kick-off " + formatTime(match.kickoff)}
+                {played
+                  ? formatTime(match.kickoff)
+                  : `${t.matchDetail.kickoffPrefix} ${formatTime(match.kickoff)}`}
               </span>
             </div>
-            <Side team={match.away} label={match.awayLabel} />
+            <Side team={match.away} label={match.awayLabel} tbd={t.matchDetail.toBeDecided} />
           </div>
 
           <div className={styles.details}>
-            <Detail label="Date" value={formatLongDate(match.kickoff)} />
-            <Detail label="Venue" value={match.venue} />
-            {match.city && <Detail label="Location" value={match.city} />}
-            <Detail label="Competition" value={match.league} />
+            <Detail label={t.matchDetail.date} value={formatLongDate(match.kickoff, t.status.dateToBeConfirmed)} />
+            <Detail label={t.matchDetail.venue} value={match.venue} />
+            {match.city && <Detail label={t.matchDetail.location} value={match.city} />}
+            <Detail label={t.matchDetail.competition} value={match.league} />
             <Detail
-              label="Stage"
-              value={match.group ? `Group Stage · Group ${match.group}` : match.roundLabel}
+              label={t.matchDetail.stage}
+              value={match.group
+                ? `${t.matchDetail.groupStageLabel} · ${t.matches.groupLabel} ${match.group}`
+                : match.roundLabel}
             />
           </div>
 

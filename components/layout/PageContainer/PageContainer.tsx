@@ -11,7 +11,6 @@ interface Props {
   className?: string;
 }
 
-/** Standard padded inner-page wrapper with a gradient page title. */
 export function PageContainer({
   eyebrow,
   title,

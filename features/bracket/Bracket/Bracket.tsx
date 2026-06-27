@@ -12,7 +12,6 @@ interface Props {
 }
 
 export function Bracket({ bracket, className }: Props) {
-  // The connected tree (everything except the standalone third-place match).
   const treeRounds = bracket.rounds.filter((r) => r.stage !== "third");
   const thirdPlace = bracket.rounds.find((r) => r.stage === "third");
 
