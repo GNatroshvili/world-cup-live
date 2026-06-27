@@ -51,6 +51,7 @@ const en = {
     matches: "matches",
     noMatches: "No matches found",
     noMatchesDesc: "Try a different status or group filter.",
+    clearFilters: "Clear Filters",
   },
   teams: {
     pageEyebrow: "Nations",

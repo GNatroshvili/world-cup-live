@@ -53,6 +53,7 @@ const ka: Dict = {
     matches: "მატჩი",
     noMatches: "მატჩები ვერ მოიძებნა",
     noMatchesDesc: "სცადეთ სხვა სტატუსი ან ჯგუფი.",
+    clearFilters: "ფილტრების გასუფთავება",
   },
   teams: {
     pageEyebrow: "ნაციები",

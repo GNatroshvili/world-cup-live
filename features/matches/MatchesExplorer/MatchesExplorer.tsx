@@ -64,6 +64,14 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
     return c;
   }, [matches]);
 
+  const isFiltered = status !== initialStatus || group !== "all" || sort !== "newest";
+
+  function clearFilters() {
+    setStatus(initialStatus);
+    setGroup("all");
+    setSort("newest");
+  }
+
   return (
     <div className={styles.wrap}>
       <div className={styles.toolbar}>
@@ -109,6 +117,11 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
 
       <p className={styles.count}>
         {filtered.length} {filtered.length === 1 ? t.matches.match : t.matches.matches}
+        {isFiltered && (
+          <button type="button" className={styles.clearBtn} onClick={clearFilters}>
+            {t.matches.clearFilters}
+          </button>
+        )}
       </p>
 
       {filtered.length > 0 ? (
