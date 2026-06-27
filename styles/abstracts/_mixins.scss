@@ -3,27 +3,20 @@
 @use "variables" as *;
 @use "functions" as *;
 
-// -----------------------------------------------------------------------------
-// Responsive helpers (mobile-first; min-width)
-// -----------------------------------------------------------------------------
+
 @mixin respond($name) {
   @media (min-width: bp($name)) {
     @content;
   }
 }
 
-// Max-width query for "below this breakpoint" overrides.
 @mixin respond-below($name) {
   @media (max-width: (bp($name) - 0.02px)) {
     @content;
   }
 }
 
-// -----------------------------------------------------------------------------
-// Surface treatments
-// -----------------------------------------------------------------------------
 
-// Frosted glass panel.
 @mixin glass($bg: var(--glass-bg), $border: var(--glass-border), $blur: 18px) {
   background: $bg;
   border: 1px solid $border;
@@ -31,7 +24,6 @@
   -webkit-backdrop-filter: blur($blur) saturate(160%);
 }
 
-// Standard elevated card surface.
 @mixin card($padding: var(--space-5)) {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -39,7 +31,6 @@
   padding: $padding;
 }
 
-// Animated gradient border via mask (no extra DOM).
 @mixin gradient-ring($radius: var(--radius-lg)) {
   position: relative;
   &::before {
@@ -60,12 +51,6 @@
   }
 }
 
-// -----------------------------------------------------------------------------
-// Typography
-// -----------------------------------------------------------------------------
-
-// Fluid font size: linearly scales between min/max across the viewport range.
-// All values are unitless rem; the slope is computed at build time.
 @mixin fluid-text($min-rem, $max-rem, $min-vw: 22.5, $max-vw: 90) {
   $slope: math.div(($max-rem - $min-rem), ($max-vw - $min-vw));
   $intercept: $min-rem - $slope * $min-vw;
@@ -76,7 +61,6 @@
   );
 }
 
-// Clamp text to a number of lines.
 @mixin line-clamp($lines: 2) {
   display: -webkit-box;
   -webkit-line-clamp: $lines;
@@ -91,9 +75,6 @@
   color: transparent;
 }
 
-// -----------------------------------------------------------------------------
-// Interaction & a11y
-// -----------------------------------------------------------------------------
 @mixin focus-ring($color: var(--primary)) {
   outline: none;
   &:focus-visible {
@@ -108,7 +89,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-// Custom slim scrollbar for scroll regions.
 @mixin custom-scrollbar($thumb: var(--border-strong), $track: transparent) {
   scrollbar-width: thin;
   scrollbar-color: $thumb $track;
@@ -125,7 +105,6 @@
   }
 }
 
-// Horizontal snap scroller (mobile swipe sections).
 @mixin snap-x {
   display: flex;
   overflow-x: auto;
@@ -137,7 +116,6 @@
   }
 }
 
-// Respect reduced-motion preferences.
 @mixin reduced-motion {
   @media (prefers-reduced-motion: reduce) {
     @content;

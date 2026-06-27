@@ -1,8 +1,5 @@
 import type { Match, MatchStatus } from "@/types";
 
-// Matches are scheduled against the tournament calendar, so dates/times are
-// rendered in a fixed timezone (UTC). Using the viewer's local timezone would
-// shift the displayed calendar day (e.g. the Final drifting from 19 → 20 Jul).
 const TZ = "UTC";
 
 const DATE_FMT = new Intl.DateTimeFormat("en-GB", {

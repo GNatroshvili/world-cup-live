@@ -1,6 +1,3 @@
-// Raw response shapes from ESPN's public soccer API (subset we consume).
-// Endpoints under site.api.espn.com/.../soccer/fifa.world/*.
-
 export interface EspnTeamLite {
   id: string;
   displayName: string;
@@ -11,7 +8,6 @@ export interface EspnTeamLite {
   logos?: { href: string }[];
 }
 
-// --- Standings ---------------------------------------------------------------
 export interface EspnStat {
   name: string;
   value: number;
@@ -24,7 +20,7 @@ export interface EspnStandingEntry {
 }
 
 export interface EspnStandingGroup {
-  name: string; // "Group A"
+  name: string;
   abbreviation: string;
   standings: { entries: EspnStandingEntry[] };
 }
@@ -33,7 +29,6 @@ export interface EspnStandingsResponse {
   children: EspnStandingGroup[];
 }
 
-// --- Teams -------------------------------------------------------------------
 export interface EspnTeamsResponse {
   sports: {
     leagues: {
@@ -42,7 +37,6 @@ export interface EspnTeamsResponse {
   }[];
 }
 
-// --- Scoreboard / schedule ---------------------------------------------------
 export interface EspnStatusType {
   state: "pre" | "in" | "post";
   completed: boolean;
@@ -81,7 +75,6 @@ export interface EspnScoreboardResponse {
   events: EspnEvent[];
 }
 
-// --- Match summary (event detail) -------------------------------------------
 export interface EspnKeyEvent {
   type?: { id?: string; text?: string };
   text?: string;
@@ -112,7 +105,6 @@ export interface EspnSummary {
   };
 }
 
-// --- Roster / athletes ------------------------------------------------------
 export interface EspnAthleteLite {
   id: string;
   displayName: string;

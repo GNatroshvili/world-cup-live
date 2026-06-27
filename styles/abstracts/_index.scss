@@ -1,7 +1,3 @@
-// Single entry point for the abstract layer.
-// Import everywhere with: @use "abstracts" as *;
 @forward "variables";
 @forward "functions";
 @forward "mixins";
-// NOTE: animations are emitted as global keyframes from globals.scss, not here,
-// so `@use "abstracts" as *` never duplicates CSS output in component modules.

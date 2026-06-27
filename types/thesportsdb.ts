@@ -1,7 +1,3 @@
-// Raw response shapes from TheSportsDB v1 JSON API.
-// Only the fields the app consumes are typed; the API returns many more.
-// Every field can be null/"" so consumers must normalize.
-
 export interface SdbTeam {
   idTeam: string;
   strTeam: string;

@@ -1,6 +1,3 @@
-// Domain models — normalized, UI-facing shapes derived from the raw API
-// and the tournament seed structure.
-
 export type GroupId =
   | "A" | "B" | "C" | "D" | "E" | "F"
   | "G" | "H" | "I" | "J" | "K" | "L";
@@ -12,7 +9,6 @@ export type Stage = "group" | KnockoutStage;
 
 export type MatchResult = "W" | "D" | "L";
 
-/** Lightweight team reference embedded in matches/standings. */
 export interface TeamRef {
   id: string;
   name: string;
@@ -45,18 +41,15 @@ export interface Team extends TeamRef {
 export interface Match {
   id: string;
   stage: Stage;
-  /** Display round label, e.g. "Matchday 1", "Round of 16". */
   roundLabel: string;
   group: GroupId | null;
   home: TeamRef | null;
   away: TeamRef | null;
-  /** Qualification-path labels for knockout fixtures with undecided teams. */
   homeLabel?: string;
   awayLabel?: string;
   homeScore: number | null;
   awayScore: number | null;
   status: MatchStatus;
-  /** ISO 8601 kickoff timestamp (UTC) when known. */
   kickoff: string | null;
   venue: string | null;
   city: string | null;
@@ -77,22 +70,19 @@ export interface Standing {
   goalsAgainst: number;
   goalDifference: number;
   points: number;
-  /** Most-recent-first results, capped to last 5. */
   form: MatchResult[];
 }
 
 export interface Group {
   id: GroupId;
-  name: string; // "Group A"
+  name: string;
   standings: Standing[];
   matches: Match[];
 }
 
-/** A single slot in the knockout bracket. */
 export interface BracketMatch {
   id: string;
   stage: KnockoutStage;
-  /** Position label used before teams are decided, e.g. "1A", "Winner M73". */
   homeLabel: string;
   awayLabel: string;
   home: TeamRef | null;
@@ -102,7 +92,6 @@ export interface BracketMatch {
   status: MatchStatus;
   kickoff: string | null;
   venue: string | null;
-  /** id of the underlying Match when this slot maps to a real fixture. */
   matchId: string | null;
 }
 
@@ -119,7 +108,6 @@ export interface Bracket {
 export interface StatLeader {
   team: TeamRef;
   value: number;
-  /** Optional secondary metric for display, e.g. "in 3 matches". */
   detail?: string;
 }
 
@@ -140,16 +128,13 @@ export interface TournamentStatistics {
   highestScoringMatches: Match[];
 }
 
-// --- Match detail (from ESPN summary) ---------------------------------------
 export type MatchEventType = "goal" | "penalty" | "own" | "yellow" | "red" | "sub";
 
 export interface MatchEventEntry {
   minute: string; // e.g. "21'"
   type: MatchEventType;
   player: string;
-  /** Second player (assist for goals, player-in for subs). */
   secondary: string | null;
-  /** "home" | "away" relative to the match. */
   side: "home" | "away" | null;
 }
 
@@ -172,12 +157,10 @@ export interface MatchDetail {
   away: TeamMatchStats;
 }
 
-// --- Player / team leaderboards (aggregated) --------------------------------
 export interface PlayerStat {
   player: string;
   team: TeamRef | null;
   value: number;
-  /** "goals" or "assists" etc. */
   detail?: string;
 }
 
@@ -187,7 +170,7 @@ export interface TeamStatRow {
   goalsFor: number;
   shots: number;
   shotsOnTarget: number;
-  possession: number; // average %
+  possession: number; 
   passes: number;
   corners: number;
 }
@@ -200,11 +183,9 @@ export interface DetailedStats {
   mostPasses: StatLeader[];
   bestPossession: StatLeader[];
   teamStats: TeamStatRow[];
-  /** number of matches that contributed (for empty-state messaging). */
   sampledMatches: number;
 }
 
-// --- Players / squad --------------------------------------------------------
 export type PositionGroup =
   | "Goalkeepers"
   | "Defenders"
@@ -217,7 +198,7 @@ export interface Player {
   name: string;
   jersey: string | null;
   age: number | null;
-  position: string | null; // e.g. "Goalkeeper"
+  position: string | null; // e.g. 
   positionGroup: PositionGroup;
   headshot: string | null;
   teamId: string;
@@ -232,7 +213,6 @@ export interface PlayerDetail extends Player {
   team: TeamRef | null;
 }
 
-/** A team's aggregate stats across its played matches (possession etc.). */
 export interface TeamSeasonStats {
   matches: number;
   avgPossession: number;
@@ -242,7 +222,6 @@ export interface TeamSeasonStats {
   passAccuracy: number;
   corners: number;
   fouls: number;
-  /** possession per match for a mini timeline */
   perMatch: { matchId: string; possession: number | null; opponent: string | null }[];
 }
 
@@ -251,7 +230,6 @@ export interface WorldCupHonours {
   years: number[];
 }
 
-/** The complete, normalized tournament dataset consumed by the app. */
 export interface TournamentData {
   teams: Team[];
   teamsById: Record<string, Team>;
@@ -259,13 +237,10 @@ export interface TournamentData {
   bracket: Bracket;
   matches: Match[];
   statistics: TournamentStatistics;
-  /** ISO timestamp of when this dataset was assembled (for "last synced" UI). */
   updatedAt: string;
 }
 
-/** Wrapper carrying provenance so the UI can flag fallback/offline state. */
 export interface DataResult<T> {
   data: T;
-  /** true when the primary source failed and fallback/seed data was used. */
   fromFallback: boolean;
 }
