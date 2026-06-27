@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { TeamCard } from "../TeamCard/TeamCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { cn } from "@/utils/cn";
 import { useUIStore } from "@/store/uiStore";
 import { useT } from "@/components/providers/I18nProvider";
+import { useSessionStorage } from "@/hooks/useSessionStorage";
 import type { GroupId, Team } from "@/types";
 import styles from "./TeamsExplorer.module.scss";
 
@@ -21,7 +22,9 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
   // search field and this page's input stay in sync automatically.
   const query = useUIStore((s) => s.searchQuery);
   const setQuery = useUIStore((s) => s.setSearchQuery);
-  const [group, setGroup] = useState<GroupId | "all">("all");
+  // Group filter is persisted in sessionStorage — survives page navigation
+  // within the same browser session but resets when the tab closes.
+  const [group, setGroup] = useSessionStorage<GroupId | "all">("teams:group", "all");
 
   // Seed the store once from the ?q= URL param (shared/deep links).
   const seeded = useRef(false);

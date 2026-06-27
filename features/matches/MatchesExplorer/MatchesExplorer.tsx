@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { MatchCard } from "../MatchCard/MatchCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { cn } from "@/utils/cn";
 import { useT } from "@/components/providers/I18nProvider";
+import { useSessionStorage } from "@/hooks/useSessionStorage";
 import type { GroupId, Match, MatchStatus } from "@/types";
 import styles from "./MatchesExplorer.module.scss";
 
@@ -27,9 +28,12 @@ function matchesStatus(m: Match, f: StatusFilter): boolean {
 
 export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Props) {
   const t = useT();
-  const [status, setStatus] = useState<StatusFilter>(initialStatus);
-  const [group, setGroup] = useState<GroupId | "all">("all");
-  const [sort, setSort] = useState<SortOrder>("newest");
+
+  // Filter + sort state is persisted in sessionStorage so returning to this
+  // page within the same browser session restores where the user left off.
+  const [status, setStatus] = useSessionStorage<StatusFilter>("matches:status", initialStatus);
+  const [group, setGroup] = useSessionStorage<GroupId | "all">("matches:group", "all");
+  const [sort, setSort] = useSessionStorage<SortOrder>("matches:sort", "newest");
 
   const STATUS_TABS: { key: StatusFilter; label: string }[] = [
     { key: "all", label: t.matches.all },

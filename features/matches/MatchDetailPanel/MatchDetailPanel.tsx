@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
 import { useT } from "@/components/providers/I18nProvider";
 import { cn } from "@/utils/cn";
@@ -71,14 +72,14 @@ export function MatchDetailPanel({ match }: Props) {
 
   useEffect(() => {
     if (!fetchable) return;
-    const controller = new AbortController();
+    const source = axios.CancelToken.source();
     let active = true;
-    fetch(`/api/match/${match.id}`, { signal: controller.signal })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: MatchDetail | null) => { if (active) setDetail(d); })
-      .catch(() => {})
+    axios
+      .get<MatchDetail>(`/api/match/${match.id}`, { cancelToken: source.token })
+      .then((res) => { if (active) setDetail(res.data); })
+      .catch((err) => { if (!axios.isCancel(err)) console.warn("Match detail fetch failed", err); })
       .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; controller.abort(); };
+    return () => { active = false; source.cancel(); };
   }, [match.id, fetchable]);
 
   if (!fetchable) return null;
