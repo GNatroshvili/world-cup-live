@@ -13,6 +13,7 @@
 // =============================================================================
 
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import {
   fetchAllTeams,
   fetchSeasonEvents,
@@ -495,9 +496,15 @@ export async function getStatistics(): Promise<DataResult<TournamentStatistics>>
 /**
  * Player + team leaderboards aggregated from per-match summaries (top scorers,
  * assists, shots, passes, possession, per-team stats). Heavier than the base
- * dataset — only the statistics page uses it. Memoized per request.
+ * dataset — only the statistics page uses it.
+ *
+ * Two-level cache:
+ *  1. unstable_cache — persists the aggregated result across requests for 120 s,
+ *     so language switches / router.refresh() return instantly instead of
+ *     re-running 30+ ESPN API calls + aggregation every time.
+ *  2. React cache() — deduplicates calls within a single render pass.
  */
-export const getDetailedStats = cache(async (): Promise<DetailedStats> => {
+const _getDetailedStatsUncached = async (): Promise<DetailedStats> => {
   const { data } = await getTournament();
   const finished = data.matches.filter((m) => m.status === "finished");
   try {
@@ -514,7 +521,15 @@ export const getDetailedStats = cache(async (): Promise<DetailedStats> => {
       sampledMatches: 0,
     };
   }
-});
+};
+
+const _getDetailedStatsCached = unstable_cache(
+  _getDetailedStatsUncached,
+  ["detailed-stats"],
+  { revalidate: 120 },
+);
+
+export const getDetailedStats = cache(_getDetailedStatsCached);
 
 /** Goal timeline + team statistics for a single match (used by the modal). */
 export async function getMatchDetail(eventId: string): Promise<MatchDetail | null> {
