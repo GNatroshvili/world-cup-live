@@ -7,6 +7,11 @@ import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { formatLongDate, formatTime, scoreline } from "@/utils/format";
 import { MatchDetailPanel } from "@/features/matches/MatchDetailPanel/MatchDetailPanel";
 import { useT } from "@/components/providers/I18nProvider";
+import {
+  translateRound,
+  translateVenue,
+  translateCity,
+} from "@/lib/i18n/translateData";
 import type { Match } from "@/types";
 import styles from "./MatchDetailsModal.module.scss";
 
@@ -15,12 +20,25 @@ interface Props {
   onClose: () => void;
 }
 
-function Side({ team, label, tbd }: { team: Match["home"]; label?: string; tbd: string }) {
+function Side({
+  team,
+  label,
+  tbd,
+}: {
+  team: Match["home"];
+  label?: string;
+  tbd: string;
+}) {
   return (
     <div className={styles.side}>
       {team ? (
         <>
-          <TeamBadge name={team.name} code={team.shortName} badge={team.badge} size="xl" />
+          <TeamBadge
+            name={team.name}
+            code={team.shortName}
+            badge={team.badge}
+            size="xl"
+          />
           <span className={styles.sideName}>{team.name}</span>
           <span className={styles.sideCode}>{team.shortName}</span>
         </>
@@ -36,7 +54,13 @@ function Side({ team, label, tbd }: { team: Match["home"]; label?: string; tbd: 
   );
 }
 
-function Detail({ label, value }: { label: string; value: string | null | undefined }) {
+function Detail({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null | undefined;
+}) {
   if (!value) return null;
   return (
     <div className={styles.detail}>
@@ -51,7 +75,12 @@ export function MatchDetailsModal({ match, onClose }: Props) {
   const played = match?.status === "finished" || match?.status === "live";
 
   return (
-    <Modal open={Boolean(match)} onClose={onClose} size="md" label={t.matchDetail.modalLabel}>
+    <Modal
+      open={Boolean(match)}
+      onClose={onClose}
+      size="md"
+      label={t.matchDetail.modalLabel}
+    >
       {match && (
         <div className={styles.wrap}>
           {match.poster || match.thumb ? (
@@ -70,13 +99,17 @@ export function MatchDetailsModal({ match, onClose }: Props) {
           <div className={styles.topRow}>
             <span className={styles.round}>
               {match.group ? `${t.matches.groupLabel} ${match.group} · ` : ""}
-              {match.roundLabel}
+              {translateRound(match.roundLabel, t)}
             </span>
             <StatusBadge status={match.status} />
           </div>
 
           <div className={styles.scoreboard}>
-            <Side team={match.home} label={match.homeLabel} tbd={t.matchDetail.toBeDecided} />
+            <Side
+              team={match.home}
+              label={match.homeLabel}
+              tbd={t.matchDetail.toBeDecided}
+            />
             <div className={styles.center}>
               <span className={styles.score}>{scoreline(match)}</span>
               <span className={styles.kickoff}>
@@ -85,19 +118,36 @@ export function MatchDetailsModal({ match, onClose }: Props) {
                   : `${t.matchDetail.kickoffPrefix} ${formatTime(match.kickoff)}`}
               </span>
             </div>
-            <Side team={match.away} label={match.awayLabel} tbd={t.matchDetail.toBeDecided} />
+            <Side
+              team={match.away}
+              label={match.awayLabel}
+              tbd={t.matchDetail.toBeDecided}
+            />
           </div>
 
           <div className={styles.details}>
-            <Detail label={t.matchDetail.date} value={formatLongDate(match.kickoff, t.status.dateToBeConfirmed)} />
-            <Detail label={t.matchDetail.venue} value={match.venue} />
-            {match.city && <Detail label={t.matchDetail.location} value={match.city} />}
+            <Detail
+              label={t.matchDetail.date}
+              value={formatLongDate(match.kickoff, t.status.dateToBeConfirmed)}
+            />
+            <Detail
+              label={t.matchDetail.venue}
+              value={translateVenue(match.venue, t)}
+            />
+            {match.city && (
+              <Detail
+                label={t.matchDetail.location}
+                value={translateCity(match.city, t)}
+              />
+            )}
             <Detail label={t.matchDetail.competition} value={match.league} />
             <Detail
               label={t.matchDetail.stage}
-              value={match.group
-                ? `${t.matchDetail.groupStageLabel} · ${t.matches.groupLabel} ${match.group}`
-                : match.roundLabel}
+              value={
+                match.group
+                  ? `${t.matchDetail.groupStageLabel} · ${t.matches.groupLabel} ${match.group}`
+                  : translateRound(match.roundLabel, t)
+              }
             />
           </div>
 

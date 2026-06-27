@@ -2,6 +2,7 @@
 
 import { useUIStore } from "@/store/uiStore";
 import { useT } from "@/components/providers/I18nProvider";
+import { translateRound, translateVenue } from "@/lib/i18n/translateData";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { cn } from "@/utils/cn";
@@ -21,12 +22,19 @@ function TeamSide({ match, side }: { match: Match; side: "home" | "away" }) {
     <div className={cn(styles.team, side === "away" && styles.away)}>
       {team ? (
         <>
-          <TeamBadge name={team.name} code={team.shortName} badge={team.badge} size="sm" />
+          <TeamBadge
+            name={team.name}
+            code={team.shortName}
+            badge={team.badge}
+            size="sm"
+          />
           <span className={styles.teamName}>{team.name}</span>
         </>
       ) : (
         <>
-          <span className={styles.tbd} aria-hidden>?</span>
+          <span className={styles.tbd} aria-hidden>
+            ?
+          </span>
           <span className={styles.teamName}>{label ?? "TBD"}</span>
         </>
       )}
@@ -38,6 +46,7 @@ export function MatchCard({ match, showGroup }: Props) {
   const openMatch = useUIStore((s) => s.openMatch);
   const t = useT();
   const played = match.status === "finished" || match.status === "live";
+  const roundLabel = translateRound(match.roundLabel, t);
 
   return (
     <button
@@ -47,8 +56,10 @@ export function MatchCard({ match, showGroup }: Props) {
     >
       <div className={styles.top}>
         <span className={styles.round}>
-          {showGroup && match.group ? `${t.matches.groupLabel} ${match.group} · ` : ""}
-          {match.roundLabel}
+          {showGroup && match.group
+            ? `${t.matches.groupLabel} ${match.group} · `
+            : ""}
+          {roundLabel}
         </span>
         <StatusBadge status={match.status} />
       </div>
@@ -63,7 +74,9 @@ export function MatchCard({ match, showGroup }: Props) {
 
       <div className={styles.foot}>
         <span>{formatKickoff(match.kickoff, t.status.scheduleTbd)}</span>
-        {match.venue && <span className={styles.venue}>{match.venue}</span>}
+        {match.venue && (
+          <span className={styles.venue}>{translateVenue(match.venue, t)}</span>
+        )}
       </div>
     </button>
   );

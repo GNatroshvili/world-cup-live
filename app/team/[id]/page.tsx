@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { getTeamDetail } from "@/lib/worldcup";
 import { getTeamSquad } from "@/lib/players";
 import { getServerT } from "@/lib/i18n/server";
+import { translateCountry } from "@/lib/i18n/translateData";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { MatchCard } from "@/features/matches/MatchCard/MatchCard";
 import { SquadSection } from "@/features/players/SquadSection/SquadSection";
@@ -90,7 +91,9 @@ export default async function TeamPage({ params }: Params) {
             </span>
           )}
           <h1 className={styles.name}>{team.name}</h1>
-          <p className={styles.country}>{team.country ?? "International"}</p>
+          <p className={styles.country}>
+            {translateCountry(team.country ?? t.countryNames.International, t)}
+          </p>
         </div>
         <Link href="/teams" className={styles.back}>
           ← {t.team.backToTeams}
@@ -156,7 +159,10 @@ export default async function TeamPage({ params }: Params) {
         <aside className={styles.aside}>
           <div className={styles.factsCard}>
             <h2 className={styles.sectionTitle}>{t.team.teamInfo}</h2>
-            <Fact label={t.team.country} value={team.country} />
+            <Fact
+              label={t.team.country}
+              value={translateCountry(team.country, t) ?? null}
+            />
             <Fact
               label={t.teams.group}
               value={team.group ? `${t.team.groupLabel} ${team.group}` : null}
