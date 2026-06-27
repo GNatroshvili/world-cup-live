@@ -4,7 +4,7 @@
   position: sticky;
   top: 0;
   z-index: z("header");
-  @include glass(rgba(8, 10, 16, 0.72), var(--border), 16px);
+  @include glass(var(--glass-bg), var(--border), 16px);
   border-bottom: 1px solid var(--border);
 }
 
