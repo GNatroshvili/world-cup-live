@@ -32,7 +32,9 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  transition: color var(--ease-fast), background var(--ease-fast);
+  transition:
+    color var(--ease-fast),
+    background var(--ease-fast);
   @include clickable;
 
   &:hover {
@@ -100,7 +102,9 @@
   border-radius: 999px;
   padding: 2px 10px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: var(--brand);

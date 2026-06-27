@@ -5,7 +5,12 @@ import axios from "axios";
 import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
 import { useT } from "@/components/providers/I18nProvider";
 import { cn } from "@/utils/cn";
-import type { Match, MatchDetail, MatchEventEntry, TeamMatchStats } from "@/types";
+import type {
+  Match,
+  MatchDetail,
+  MatchEventEntry,
+  TeamMatchStats,
+} from "@/types";
 import styles from "./MatchDetailPanel.module.scss";
 
 interface Props {
@@ -47,17 +52,25 @@ function StatBar({
   return (
     <div className={styles.statRow}>
       <span className={cn(styles.statVal, h >= a && styles.statLead)}>
-        {h}{pct ? "%" : ""}
+        {h}
+        {pct ? "%" : ""}
       </span>
       <div className={styles.statMid}>
         <span className={styles.statLabel}>{label}</span>
         <div className={styles.statTrack}>
-          <span className={styles.statFillHome} style={{ width: `${homePct}%` }} />
-          <span className={styles.statFillAway} style={{ width: `${100 - homePct}%` }} />
+          <span
+            className={styles.statFillHome}
+            style={{ width: `${homePct}%` }}
+          />
+          <span
+            className={styles.statFillAway}
+            style={{ width: `${100 - homePct}%` }}
+          />
         </div>
       </div>
       <span className={cn(styles.statVal, a > h && styles.statLead)}>
-        {a}{pct ? "%" : ""}
+        {a}
+        {pct ? "%" : ""}
       </span>
     </div>
   );
@@ -76,10 +89,20 @@ export function MatchDetailPanel({ match }: Props) {
     let active = true;
     axios
       .get<MatchDetail>(`/api/match/${match.id}`, { cancelToken: source.token })
-      .then((res) => { if (active) setDetail(res.data); })
-      .catch((err) => { if (!axios.isCancel(err)) console.warn("Match detail fetch failed", err); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; source.cancel(); };
+      .then((res) => {
+        if (active) setDetail(res.data);
+      })
+      .catch((err) => {
+        if (!axios.isCancel(err))
+          console.warn("Match detail fetch failed", err);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+      source.cancel();
+    };
   }, [match.id, fetchable]);
 
   if (!fetchable) return null;
@@ -94,7 +117,11 @@ export function MatchDetailPanel({ match }: Props) {
   }
   if (!detail) return null;
 
-  const statRows: { key: keyof TeamMatchStats; label: string; pct?: boolean }[] = [
+  const statRows: {
+    key: keyof TeamMatchStats;
+    label: string;
+    pct?: boolean;
+  }[] = [
     { key: "possession", label: t.matchDetail.possession, pct: true },
     { key: "shots", label: t.matchDetail.shots },
     { key: "shotsOnTarget", label: t.matchDetail.shotsOnTarget },
@@ -107,13 +134,17 @@ export function MatchDetailPanel({ match }: Props) {
   const goals = detail.events.filter(
     (e) => e.type === "goal" || e.type === "penalty" || e.type === "own",
   );
-  const cards = detail.events.filter((e) => e.type === "yellow" || e.type === "red");
+  const cards = detail.events.filter(
+    (e) => e.type === "yellow" || e.type === "red",
+  );
   const timeline = [...goals, ...cards].sort(
     (a, b) => parseInt(a.minute) - parseInt(b.minute),
   );
 
   const hasStats =
-    detail.home.shots != null || detail.home.possession != null || detail.away.shots != null;
+    detail.home.shots != null ||
+    detail.home.possession != null ||
+    detail.away.shots != null;
 
   return (
     <div className={styles.panel}>
@@ -124,14 +155,19 @@ export function MatchDetailPanel({ match }: Props) {
             {timeline.map((e, i) => (
               <li
                 key={i}
-                className={cn(styles.event, e.side === "away" ? styles.right : styles.left)}
+                className={cn(
+                  styles.event,
+                  e.side === "away" ? styles.right : styles.left,
+                )}
               >
                 <span className={styles.eventBody}>
                   <span className={styles.icon}>{ICON[e.type]}</span>
                   <span className={styles.player}>
                     {eventLabel(e)}
                     {e.type === "goal" && e.secondary && (
-                      <span className={styles.assist}>{t.matchDetail.assist} {e.secondary}</span>
+                      <span className={styles.assist}>
+                        {t.matchDetail.assist} {e.secondary}
+                      </span>
                     )}
                   </span>
                 </span>

@@ -24,7 +24,10 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
   const setQuery = useUIStore((s) => s.setSearchQuery);
   // Group filter is persisted in sessionStorage — survives page navigation
   // within the same browser session but resets when the tab closes.
-  const [group, setGroup] = useSessionStorage<GroupId | "all">("teams:group", "all");
+  const [group, setGroup] = useSessionStorage<GroupId | "all">(
+    "teams:group",
+    "all",
+  );
 
   // Seed the store once from the ?q= URL param (shared/deep links).
   const seeded = useRef(false);
@@ -51,9 +54,26 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
     <div className={styles.wrap}>
       <div className={styles.toolbar}>
         <div className={styles.searchBox}>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden>
-            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
-            <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            aria-hidden
+          >
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            />
+            <path
+              d="m20 20-3-3"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
           </svg>
           <input
             type="search"
@@ -64,7 +84,11 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
           />
         </div>
 
-        <div className={styles.chips} role="tablist" aria-label="Filter by group">
+        <div
+          className={styles.chips}
+          role="tablist"
+          aria-label="Filter by group"
+        >
           <button
             className={cn(styles.chip, group === "all" && styles.chipActive)}
             onClick={() => setGroup("all")}
@@ -84,7 +108,8 @@ export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
       </div>
 
       <p className={styles.count}>
-        {filtered.length} {filtered.length === 1 ? t.teams.group : t.teams.group}
+        {filtered.length}{" "}
+        {filtered.length === 1 ? t.teams.group : t.teams.group}
       </p>
 
       {filtered.length > 0 ? (

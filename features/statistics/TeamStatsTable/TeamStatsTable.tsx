@@ -3,6 +3,7 @@
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { useT } from "@/components/providers/I18nProvider";
+import { translateCountry } from "@/lib/i18n/translateData";
 import type { TeamStatRow } from "@/types";
 import styles from "./TeamStatsTable.module.scss";
 
@@ -46,7 +47,7 @@ export function TeamStatsTable({ rows }: Props) {
                   badge={r.team.badge}
                   size="xs"
                 />
-                <span className={styles.name}>{r.team.name}</span>
+                <span className={styles.name}>{translateCountry(r.team.name, t)}</span>
               </td>
               <td>{r.played}</td>
               <td className={styles.strong}>{r.goalsFor}</td>

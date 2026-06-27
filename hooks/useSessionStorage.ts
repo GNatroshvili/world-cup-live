@@ -24,7 +24,7 @@ export function useSessionStorage<T>(key: string, initialValue: T) {
     } catch {
       // sessionStorage unavailable or value unparseable — keep initialValue.
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   const setValue = useCallback(

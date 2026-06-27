@@ -2,7 +2,8 @@
 
 import { useUIStore } from "@/store/uiStore";
 import { useT } from "@/components/providers/I18nProvider";
-import { translateRound, translateVenue } from "@/lib/i18n/translateData";
+import { translateRound, translateVenue, translateCountry } from "@/lib/i18n/translateData";
+import type { Dict } from "@/lib/i18n/en";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge/StatusBadge";
 import { cn } from "@/utils/cn";
@@ -15,7 +16,7 @@ interface Props {
   showGroup?: boolean;
 }
 
-function TeamSide({ match, side }: { match: Match; side: "home" | "away" }) {
+function TeamSide({ match, side, t }: { match: Match; side: "home" | "away"; t: Dict }) {
   const team = side === "home" ? match.home : match.away;
   const label = side === "home" ? match.homeLabel : match.awayLabel;
   return (
@@ -28,7 +29,7 @@ function TeamSide({ match, side }: { match: Match; side: "home" | "away" }) {
             badge={team.badge}
             size="sm"
           />
-          <span className={styles.teamName}>{team.name}</span>
+          <span className={styles.teamName}>{translateCountry(team.name, t)}</span>
         </>
       ) : (
         <>
@@ -65,11 +66,11 @@ export function MatchCard({ match, showGroup }: Props) {
       </div>
 
       <div className={styles.fixture}>
-        <TeamSide match={match} side="home" />
+        <TeamSide match={match} side="home" t={t} />
         <div className={cn(styles.score, played && styles.played)}>
           {scoreline(match)}
         </div>
-        <TeamSide match={match} side="away" />
+        <TeamSide match={match} side="away" t={t} />
       </div>
 
       <div className={styles.foot}>

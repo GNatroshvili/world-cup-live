@@ -3,6 +3,7 @@
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { useT } from "@/components/providers/I18nProvider";
+import { translateCountry } from "@/lib/i18n/translateData";
 import { cn } from "@/utils/cn";
 import type { StatLeader } from "@/types";
 import styles from "./Leaderboard.module.scss";
@@ -33,7 +34,7 @@ export function Leaderboard({ title, unit, leaders, accent = "primary" }: Props)
                 size="sm"
               />
               <span className={styles.name}>
-                {l.team.name}
+                {translateCountry(l.team.name, t)}
                 {l.detail && <span className={styles.detail}>{l.detail}</span>}
               </span>
               <span className={styles.value}>

@@ -22,18 +22,32 @@ interface Props {
 function matchesStatus(m: Match, f: StatusFilter): boolean {
   if (f === "all") return true;
   if (f === "live") return m.status === "live";
-  if (f === "upcoming") return m.status === "scheduled" || m.status === "postponed";
+  if (f === "upcoming")
+    return m.status === "scheduled" || m.status === "postponed";
   return m.status === "finished";
 }
 
-export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Props) {
+export function MatchesExplorer({
+  matches,
+  groups,
+  initialStatus = "all",
+}: Props) {
   const t = useT();
 
   // Filter + sort state is persisted in sessionStorage so returning to this
   // page within the same browser session restores where the user left off.
-  const [status, setStatus] = useSessionStorage<StatusFilter>("matches:status", initialStatus);
-  const [group, setGroup] = useSessionStorage<GroupId | "all">("matches:group", "all");
-  const [sort, setSort] = useSessionStorage<SortOrder>("matches:sort", "newest");
+  const [status, setStatus] = useSessionStorage<StatusFilter>(
+    "matches:status",
+    initialStatus,
+  );
+  const [group, setGroup] = useSessionStorage<GroupId | "all">(
+    "matches:group",
+    "all",
+  );
+  const [sort, setSort] = useSessionStorage<SortOrder>(
+    "matches:sort",
+    "newest",
+  );
 
   const STATUS_TABS: { key: StatusFilter; label: string }[] = [
     { key: "all", label: t.matches.all },
@@ -64,7 +78,8 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
     return c;
   }, [matches]);
 
-  const isFiltered = status !== initialStatus || group !== "all" || sort !== "newest";
+  const isFiltered =
+    status !== initialStatus || group !== "all" || sort !== "newest";
 
   function clearFilters() {
     setStatus(initialStatus);
@@ -75,7 +90,11 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
   return (
     <div className={styles.wrap}>
       <div className={styles.toolbar}>
-        <div className={styles.tabs} role="tablist" aria-label="Filter by status">
+        <div
+          className={styles.tabs}
+          role="tablist"
+          aria-label="Filter by status"
+        >
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.key}
@@ -95,7 +114,10 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
         <div className={styles.selects}>
           <label className={styles.select}>
             <span>{t.matches.allGroups.split(" ")[0]}</span>
-            <select value={group} onChange={(e) => setGroup(e.target.value as GroupId | "all")}>
+            <select
+              value={group}
+              onChange={(e) => setGroup(e.target.value as GroupId | "all")}
+            >
               <option value="all">{t.matches.allGroups}</option>
               {groups.map((g) => (
                 <option key={g} value={g}>
@@ -107,7 +129,10 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
 
           <label className={styles.select}>
             <span>{t.matches.sort}</span>
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortOrder)}>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortOrder)}
+            >
               <option value="newest">{t.matches.newestFirst}</option>
               <option value="oldest">{t.matches.oldestFirst}</option>
             </select>
@@ -116,9 +141,14 @@ export function MatchesExplorer({ matches, groups, initialStatus = "all" }: Prop
       </div>
 
       <p className={styles.count}>
-        {filtered.length} {filtered.length === 1 ? t.matches.match : t.matches.matches}
+        {filtered.length}{" "}
+        {filtered.length === 1 ? t.matches.match : t.matches.matches}
         {isFiltered && (
-          <button type="button" className={styles.clearBtn} onClick={clearFilters}>
+          <button
+            type="button"
+            className={styles.clearBtn}
+            onClick={clearFilters}
+          >
             {t.matches.clearFilters}
           </button>
         )}

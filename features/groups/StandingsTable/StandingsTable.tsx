@@ -4,6 +4,7 @@ import { cn } from "@/utils/cn";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { FormPills } from "@/components/ui/FormPills/FormPills";
 import { useT } from "@/components/providers/I18nProvider";
+import { translateCountry } from "@/lib/i18n/translateData";
 import type { Standing } from "@/types";
 import styles from "./StandingsTable.module.scss";
 
@@ -50,7 +51,7 @@ export function StandingsTable({ standings, variant = "compact", qualifyCount = 
                 badge={s.team.badge}
                 size="xs"
               />
-              <span className={styles.name}>{s.team.name}</span>
+              <span className={styles.name}>{translateCountry(s.team.name, t)}</span>
               <span className={styles.code}>{s.team.shortName}</span>
             </td>
             <td>{s.played}</td>

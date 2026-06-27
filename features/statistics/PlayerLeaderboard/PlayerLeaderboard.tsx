@@ -3,6 +3,7 @@
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { useT } from "@/components/providers/I18nProvider";
+import { translateCountry } from "@/lib/i18n/translateData";
 import { cn } from "@/utils/cn";
 import type { PlayerStat } from "@/types";
 import styles from "./PlayerLeaderboard.module.scss";
@@ -38,7 +39,7 @@ export function PlayerLeaderboard({ title, players, accent = "gold" }: Props) {
               )}
               <span className={styles.name}>
                 {p.player}
-                <span className={styles.team}>{p.team?.name ?? ""}</span>
+                <span className={styles.team}>{translateCountry(p.team?.name, t) ?? ""}</span>
               </span>
               <span className={styles.value}>
                 {p.value}
