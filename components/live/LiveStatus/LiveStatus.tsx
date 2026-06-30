@@ -19,7 +19,6 @@ const SYNC_FMT = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 });
 
-
 export function LiveStatus({
   updatedAt,
   intervalMs = 30_000,

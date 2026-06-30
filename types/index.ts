@@ -12,7 +12,7 @@ export type MatchResult = "W" | "D" | "L";
 export interface TeamRef {
   id: string;
   name: string;
-  shortName: string; // 3-letter code, e.g. "ARG"
+  shortName: string;
   badge: string | null;
 }
 
@@ -131,7 +131,7 @@ export interface TournamentStatistics {
 export type MatchEventType = "goal" | "penalty" | "own" | "yellow" | "red" | "sub";
 
 export interface MatchEventEntry {
-  minute: string; // e.g. "21'"
+  minute: string;
   type: MatchEventType;
   player: string;
   secondary: string | null;
@@ -170,7 +170,7 @@ export interface TeamStatRow {
   goalsFor: number;
   shots: number;
   shotsOnTarget: number;
-  possession: number; 
+  possession: number;
   passes: number;
   corners: number;
 }
@@ -198,7 +198,7 @@ export interface Player {
   name: string;
   jersey: string | null;
   age: number | null;
-  position: string | null; // e.g. 
+  position: string | null;
   positionGroup: PositionGroup;
   headshot: string | null;
   teamId: string;

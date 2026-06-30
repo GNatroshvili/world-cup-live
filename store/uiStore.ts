@@ -1,5 +1,3 @@
-// Global UI state (client). Holds search text, mobile-nav state, and the
-// currently-open modal payloads so any component can open a group/match modal.
 import { create } from "zustand";
 import type { Group, Match } from "@/types";
 

@@ -18,18 +18,13 @@ interface Props {
 
 export function TeamsExplorer({ teams, groups, initialQuery = "" }: Props) {
   const t = useT();
-  // The store's searchQuery is the single source of truth, so the header
-  // search field and this page's input stay in sync automatically.
   const query = useUIStore((s) => s.searchQuery);
   const setQuery = useUIStore((s) => s.setSearchQuery);
-  // Group filter is persisted in sessionStorage — survives page navigation
-  // within the same browser session but resets when the tab closes.
   const [group, setGroup] = useSessionStorage<GroupId | "all">(
     "teams:group",
     "all",
   );
 
-  // Seed the store once from the ?q= URL param (shared/deep links).
   const seeded = useRef(false);
   useEffect(() => {
     if (!seeded.current && initialQuery) setQuery(initialQuery);

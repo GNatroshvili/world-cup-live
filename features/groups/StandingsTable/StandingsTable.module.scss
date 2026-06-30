@@ -84,7 +84,6 @@
 .pos1 { color: var(--win) !important; }
 .neg { color: var(--loss) !important; }
 
-// Qualification highlight (top 2).
 .qualify {
   position: relative;
   .posMark {
@@ -94,7 +93,6 @@
   }
 }
 
-// On narrow group cards, swap full names for codes.
 @include respond-below("sm") {
   .table:not(.full) {
     .name { display: none; }

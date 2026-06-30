@@ -384,9 +384,6 @@ const en = {
     Panama: "Panama",
     International: "International",
   },
-  // 3-letter team codes (TeamRef.shortName), keyed by the English FIFA code.
-  // English keeps the code as-is; other locales override with a localized
-  // abbreviation. Falls back to the original code when a key is missing.
   shortCountryNames: {
     MEX: "MEX",
     RSA: "RSA",

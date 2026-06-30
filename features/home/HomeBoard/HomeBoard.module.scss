@@ -5,12 +5,10 @@
   grid-template-columns: 1fr;
   gap: var(--space-5);
 
-  // Tablet: groups side-by-side, bracket spans full width beneath.
   @include respond("md") {
     grid-template-columns: 1fr 1fr;
   }
 
-  // Desktop: the signature three-column layout.
   @include respond("xl") {
     grid-template-columns: minmax(280px, 1fr) minmax(520px, 2.1fr) minmax(280px, 1fr);
     align-items: start;
@@ -30,7 +28,6 @@
     radial-gradient(100% 60% at 50% 0%, rgba(22, 200, 255, 0.05), transparent 60%),
     var(--surface-1);
 
-  // On tablet the bracket sits beneath both group columns.
   @include respond("md") {
     grid-column: 1 / -1;
     order: 3;

@@ -45,7 +45,6 @@ export function formatTime(iso: string | null): string {
   return Number.isNaN(d.getTime()) ? "--:--" : TIME_FMT.format(d);
 }
 
-/** Short kickoff descriptor used on cards, e.g. "Sat 14 Jun · 19:00". */
 export function formatKickoff(
   iso: string | null,
   fallback = "Schedule TBD",
@@ -67,7 +66,6 @@ export function statusLabel(status: MatchStatus): string {
   }
 }
 
-/** "2 - 0" for played matches, "vs" otherwise. */
 export function scoreline(
   match: Pick<Match, "homeScore" | "awayScore" | "status">,
 ): string {
@@ -79,7 +77,6 @@ export function scoreline(
   return "vs";
 }
 
-/** Initials fallback when a team has no badge, e.g. "Ivory Coast" -> "IC". */
 export function teamInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();

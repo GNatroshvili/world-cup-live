@@ -1,6 +1,3 @@
-// Fantasy predictions, persisted per-browser in localStorage (no backend).
-// Each visitor builds one prediction "entry"; scoring compares it to real
-// ESPN results on the /fantasy page.
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GroupId } from "@/types";
@@ -8,7 +5,6 @@ import type { GroupId } from "@/types";
 interface FantasyState {
   name: string;
   groupWinners: Partial<Record<GroupId, string>>;
-  /** knockout match id → predicted advancing side */
   knockoutWinners: Record<string, "home" | "away">;
 
   setName: (name: string) => void;
@@ -36,7 +32,6 @@ export const useFantasyStore = create<FantasyState>()(
     }),
     {
       name: "wc26-fantasy",
-      // Rehydrated manually after mount to avoid SSR/client markup mismatch.
       skipHydration: true,
     },
   ),

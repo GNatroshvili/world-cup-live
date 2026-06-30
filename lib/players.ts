@@ -38,7 +38,6 @@ function toPlayer(a: EspnAthleteLite, teamId: string): Player {
   };
 }
 
-/** A team's squad, sorted by position group then shirt number. */
 export const getTeamSquad = cache(async (teamId: string): Promise<Player[]> => {
   try {
     const r = await fetchEspnRoster(teamId);
@@ -53,7 +52,6 @@ export const getTeamSquad = cache(async (teamId: string): Promise<Player[]> => {
   }
 });
 
-/** A single player's profile. */
 export const getPlayer = cache(async (athleteId: string): Promise<PlayerDetail | null> => {
   try {
     const r = await fetchEspnAthlete(athleteId);

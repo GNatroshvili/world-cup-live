@@ -1,7 +1,3 @@
-// Pure functions that DERIVE standings and statistics from match data.
-// No tournament results are hardcoded here — everything is computed from the
-// finished matches passed in (which carry real scores fetched from the API).
-
 import type {
   Match,
   MatchResult,
@@ -20,7 +16,6 @@ interface Tally {
   goalsFor: number;
   goalsAgainst: number;
   cleanSheets: number;
-  /** chronological results for form */
   results: { at: number; r: MatchResult }[];
 }
 
@@ -90,7 +85,6 @@ function form(t: Tally): MatchResult[] {
     .map((x) => x.r);
 }
 
-/** Standings for a set of teams, computed from their finished matches. */
 export function computeStandings(teams: TeamRef[], matches: Match[]): Standing[] {
   const tally = new Map<string, Tally>();
   teams.forEach((t) => tally.set(t.id, emptyTally(t)));
@@ -137,7 +131,6 @@ function leaderboard(
     }));
 }
 
-/** Tournament-wide statistics, computed from all finished matches. */
 export function buildStatistics(
   teams: TeamRef[],
   matches: Match[],

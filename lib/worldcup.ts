@@ -1,17 +1,3 @@
-// =============================================================================
-// Tournament orchestrator.
-//
-// Combines the static structure (data/tournament.ts) with LIVE data from
-// TheSportsDB:
-//   • team metadata (badges, descriptions, banners, stadiums) — from API
-//   • real match scores/status                                 — from API
-//   • standings & statistics                                   — COMPUTED here
-//
-// No scores are ever hardcoded. Fixtures without a published result remain
-// "scheduled". If the API is unreachable, the app still renders the full
-// structure with `fromFallback: true` so the UI can flag offline mode.
-// =============================================================================
-
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import {
@@ -59,7 +45,6 @@ import type {
 
 export type { TournamentData };
 
-// --- name normalization for matching API <-> seed -----------------------------
 const ALIASES: Record<string, string> = {
   "united states": "usa",
   "korea republic": "south korea",
@@ -74,7 +59,7 @@ function normalizeName(input: string | null | undefined): string {
   if (!input) return "";
   let s = input
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "") // strip diacritics
+    .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
     .replace(/['.]/g, "")
     .replace(/\s+/g, " ")
@@ -128,7 +113,6 @@ function codeFromName(name: string): string {
   return letters.slice(0, 3).toUpperCase() || "TBD";
 }
 
-// 4-team round-robin schedule (indices into the group's team array).
 const ROUND_ROBIN: [number, number][][] = [
   [[0, 1], [2, 3]],
   [[0, 2], [3, 1]],
@@ -139,7 +123,6 @@ function buildTeams(apiTeams: SdbTeam[]): {
   teams: Team[];
   refByCode: Map<string, TeamRef>;
 } {
-  // Index API teams by every normalized identifier they expose.
   const apiByName = new Map<string, SdbTeam>();
   for (const t of apiTeams) {
     for (const n of [t.strTeam, t.strTeamAlternate]) {
@@ -239,7 +222,6 @@ function buildGroupFixtures(
           poster: null,
         };
 
-        // Overlay a real result if the API has this exact pairing.
         const ev = eventByPair.get(pairKey(home.name, away.name));
         if (ev) {
           overlaidEventIds.add(ev.idEvent);
@@ -281,8 +263,6 @@ function buildKnockout(): { bracket: Bracket; matches: Match[] } {
     const bracketMatches: BracketMatch[] = round.slots.map((slot) => {
       const venue = HOST_VENUES[slot.venueIndex];
       const kickoff = atTime(slot.date, 0, 20);
-      // Teams are resolved live once the group stage concludes; until then the
-      // qualification-path labels are shown.
       const bm: BracketMatch = {
         id: slot.id,
         stage: round.stage,
@@ -370,10 +350,6 @@ function uniqueRefs(matches: Match[]): TeamRef[] {
   return [...map.values()];
 }
 
-/**
- * Fallback pipeline: builds the tournament from the static seed draw enriched
- * with TheSportsDB. Used only when the primary ESPN source is unreachable.
- */
 async function buildSeedTournament(): Promise<TournamentData> {
     let apiTeams: SdbTeam[] = [];
     let apiEvents: SdbEvent[] = [];
@@ -383,7 +359,6 @@ async function buildSeedTournament(): Promise<TournamentData> {
       apiTeams = t;
       apiEvents = e ?? [];
     } catch {
-      // network down — seed structure still renders below
     }
 
     const { teams, refByCode } = buildTeams(apiTeams);
@@ -403,7 +378,6 @@ async function buildSeedTournament(): Promise<TournamentData> {
     );
     const { bracket, matches: knockoutMatches } = buildKnockout();
 
-    // Surface any real API results that didn't map onto a group fixture.
     const standaloneReal = apiEvents
       .filter((ev) => !overlaidEventIds.has(ev.idEvent))
       .map(eventToMatch);
@@ -422,14 +396,9 @@ async function buildSeedTournament(): Promise<TournamentData> {
       (a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""),
     );
 
-    // Statistics span every team that appears in a counted match (participants
-    // plus any extra teams from real standalone results).
     const statsMatches = [...groupMatches, ...standaloneReal];
     const statistics = buildStatistics(uniqueRefs(statsMatches), statsMatches);
-    // Headline team count reflects the 48 tournament participants, not the
-    // wider set of teams that appear in standalone real results.
     statistics.totals.teams = teams.length;
-    // "Fixtures" reflects the full calendar (group + knockout + real extras).
     statistics.totals.matchesScheduled = matches.length;
 
     const teamsById: Record<string, Team> = {};
@@ -446,12 +415,6 @@ async function buildSeedTournament(): Promise<TournamentData> {
     };
 }
 
-/**
- * Build the full tournament dataset. Primary source is ESPN's public API
- * (real standings, full schedule, live scores); on failure it falls back to the
- * seed + TheSportsDB pipeline. Memoized per request via React `cache`;
- * cross-request caching is handled by fetch revalidation in the service layer.
- */
 export const getTournament = cache(
   async (): Promise<DataResult<TournamentData>> => {
     try {
@@ -460,13 +423,10 @@ export const getTournament = cache(
         return { data, fromFallback: false };
       }
     } catch {
-      // ESPN unreachable — fall back to the seed pipeline below.
     }
     return { data: await buildSeedTournament(), fromFallback: true };
   },
 );
-
-// --- page-level selectors -----------------------------------------------------
 
 export async function getGroups(): Promise<DataResult<Group[]>> {
   const { data, fromFallback } = await getTournament();
@@ -493,17 +453,6 @@ export async function getStatistics(): Promise<DataResult<TournamentStatistics>>
   return { data: data.statistics, fromFallback };
 }
 
-/**
- * Player + team leaderboards aggregated from per-match summaries (top scorers,
- * assists, shots, passes, possession, per-team stats). Heavier than the base
- * dataset — only the statistics page uses it.
- *
- * Two-level cache:
- *  1. unstable_cache — persists the aggregated result across requests for 120 s,
- *     so language switches / router.refresh() return instantly instead of
- *     re-running 30+ ESPN API calls + aggregation every time.
- *  2. React cache() — deduplicates calls within a single render pass.
- */
 const _getDetailedStatsUncached = async (): Promise<DetailedStats> => {
   const { data } = await getTournament();
   const finished = data.matches.filter((m) => m.status === "finished");
@@ -531,7 +480,6 @@ const _getDetailedStatsCached = unstable_cache(
 
 export const getDetailedStats = cache(_getDetailedStatsCached);
 
-/** Goal timeline + team statistics for a single match (used by the modal). */
 export async function getMatchDetail(eventId: string): Promise<MatchDetail | null> {
   try {
     const summary = await fetchEspnSummary(eventId);
@@ -553,8 +501,6 @@ export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
   let team = data.teamsById[id];
   if (!team) return null;
 
-  // Enrich with TheSportsDB metadata (description, banner, stadium) by name,
-  // since the primary source (ESPN) doesn't carry long-form team content.
   try {
     const api = await fetchTeamByName(team.name);
     if (api) {
@@ -580,7 +526,6 @@ export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
       };
     }
   } catch {
-    // keep tournament-level data on failure
   }
 
   const involves = (m: Match) => m.home?.id === id || m.away?.id === id;
@@ -597,7 +542,6 @@ export async function getTeamDetail(id: string): Promise<TeamDetail | null> {
   return { team, recent, upcoming, honours: worldCupTitles(team.name) };
 }
 
-/** A team's aggregate stats (possession etc.) across its played matches. */
 export const getTeamSeasonStats = cache(
   async (teamId: string): Promise<TeamSeasonStats | null> => {
     const { data } = await getTournament();

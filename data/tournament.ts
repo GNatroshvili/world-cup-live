@@ -35,7 +35,6 @@ export const HOST_VENUES: Venue[] = [
   { stadium: "Arrowhead Stadium", city: "Kansas City", country: "USA" },
 ];
 
-
 export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
   A: [
     { name: "Mexico", code: "MEX", country: "Mexico" },
@@ -111,7 +110,6 @@ export const GROUP_DRAW: Record<GroupId, SeedTeam[]> = {
   ],
 };
 
-
 export const GROUP_STAGE_START = "2026-06-11";
 export const MATCHDAY_OFFSETS_DAYS = [0, 7, 13];
 
@@ -128,7 +126,6 @@ export interface KnockoutRoundTemplate {
   title: string;
   slots: KnockoutSlotTemplate[];
 }
-
 
 export const KNOCKOUT_TEMPLATE: KnockoutRoundTemplate[] = [
   {

@@ -1,6 +1,5 @@
 @use "../abstracts" as *;
 
-// Centered, padded page container.
 .container {
   width: 100%;
   max-width: var(--container-max);
@@ -15,7 +14,6 @@
   }
 }
 
-// Accessible visually-hidden (screen-reader only).
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -28,12 +26,10 @@
   border: 0;
 }
 
-// Gradient text helper class.
 .gradient-text {
   @include gradient-text(var(--gradient-primary));
 }
 
-// Frosted panel helper.
 .glass {
   @include glass();
 }

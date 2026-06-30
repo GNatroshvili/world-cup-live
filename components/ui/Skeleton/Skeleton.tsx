@@ -9,7 +9,6 @@ interface Props {
   circle?: boolean;
 }
 
-/** Shimmering placeholder block used in loading states. */
 export function Skeleton({ width, height, radius, circle, className }: Props) {
   return (
     <span

@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 
-/** Locks body scroll while `locked` is true (used by modals/drawers). */
 export function useScrollLock(locked: boolean): void {
   useEffect(() => {
     if (!locked) return;

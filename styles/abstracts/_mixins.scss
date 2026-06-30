@@ -3,7 +3,6 @@
 @use "variables" as *;
 @use "functions" as *;
 
-
 @mixin respond($name) {
   @media (min-width: bp($name)) {
     @content;
@@ -15,7 +14,6 @@
     @content;
   }
 }
-
 
 @mixin glass($bg: var(--glass-bg), $border: var(--glass-border), $blur: 18px) {
   background: $bg;

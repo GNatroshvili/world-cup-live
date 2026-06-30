@@ -34,8 +34,6 @@ export function MatchesExplorer({
 }: Props) {
   const t = useT();
 
-  // Filter + sort state is persisted in sessionStorage so returning to this
-  // page within the same browser session restores where the user left off.
   const [status, setStatus] = useSessionStorage<StatusFilter>(
     "matches:status",
     initialStatus,

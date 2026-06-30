@@ -1,11 +1,3 @@
-// Pure fantasy scoring — compares a user's predictions to the real outcomes.
-// Usable on the client; the server supplies the resolved `FantasyActuals`.
-//
-// Predictions cover the group winners and the winner of every knockout tie
-// (Round of 32 → Final + Third-Place). The champion is whoever the user picks
-// to win the Final, the finalists are their Semi-Final picks, and so on — so
-// the bracket alone captures the full podium with no separate inputs.
-
 import type { GroupId, KnockoutStage } from "@/types";
 
 export type PickStatus = "correct" | "wrong" | "pending" | "none";
@@ -13,11 +5,9 @@ export type Side = "home" | "away";
 
 export interface ResolvedPick {
   teamId: string | null;
-  /** true once the real outcome is known (group complete). */
   decided: boolean;
 }
 
-/** A knockout fixture's real outcome (which side advanced), keyed by match id. */
 export interface KnockoutActual {
   matchId: string;
   stage: KnockoutStage;
@@ -39,7 +29,6 @@ export const POINTS = {
   group: 5,
 } as const;
 
-/** Points for correctly predicting a tie's winner, escalating by round. */
 export const KNOCKOUT_POINTS: Record<KnockoutStage, number> = {
   r32: 5,
   r16: 8,
@@ -74,7 +63,6 @@ function sideStatusFor(
 export interface FantasyScore {
   earned: number;
   pending: number;
-  /** total points available across every prediction in play */
   max: number;
   correctCount: number;
   groupStatus: Record<GroupId, PickStatus>;

@@ -1,12 +1,9 @@
-// Resilient JSON fetch wrapper with timeout, retry + backoff, and Next.js
-// data-cache revalidation. Server-side only. Used by every data source.
-
-const API_KEY = process.env.THESPORTSDB_KEY ?? "3"; // "3" = free public test key
+const API_KEY = process.env.THESPORTSDB_KEY ?? "3";
 const BASE_URL = `https://www.thesportsdb.com/api/v1/json/${API_KEY}`;
 
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_RETRIES = 2;
-const DEFAULT_REVALIDATE = 60; // 1 minute — keep data fresh by default
+const DEFAULT_REVALIDATE = 60;
 
 export class ApiError extends Error {
   constructor(
@@ -20,7 +17,6 @@ export class ApiError extends Error {
 }
 
 interface FetchOptions {
-  /** Seconds before the Next.js data cache is considered stale. */
   revalidate?: number;
   retries?: number;
   timeoutMs?: number;
@@ -29,10 +25,6 @@ interface FetchOptions {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Fetch a full URL and parse JSON. Retries transient failures (network / 5xx /
- * timeout) with exponential backoff. Generic across data sources.
- */
 export async function fetchJson<T>(
   url: string,
   options: FetchOptions = {},
@@ -61,7 +53,6 @@ export async function fetchJson<T>(
       });
 
       if (!res.ok) {
-        // Retry server errors; fail fast on client errors.
         if (res.status >= 500 && attempt < retries) {
           throw new ApiError(`Upstream ${res.status}`, res.status);
         }
@@ -71,12 +62,11 @@ export async function fetchJson<T>(
       return (await res.json()) as T;
     } catch (error) {
       lastError = error;
-      // Don't retry definitive client errors.
       if (error instanceof ApiError && error.status && error.status < 500) {
         throw error;
       }
       if (attempt < retries) {
-        await sleep(2 ** attempt * 250); // 250ms, 500ms, ...
+        await sleep(2 ** attempt * 250);
         continue;
       }
     } finally {
@@ -91,7 +81,6 @@ export async function fetchJson<T>(
   );
 }
 
-/** TheSportsDB-specific helper: resolves a path against the league base URL. */
 export function sdbFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   return fetchJson<T>(`${BASE_URL}${path}`, options);
 }

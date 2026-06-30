@@ -15,17 +15,12 @@ interface Props {
   className?: string;
 }
 
-// Deterministic hue from the team code so the monogram fallback is stable.
 function hue(seed: string): number {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) % 360;
   return h;
 }
 
-/**
- * Team crest. Uses the live badge when available, otherwise renders a
- * deterministic gradient monogram so the UI never shows a broken image.
- */
 export function TeamBadge({ name, code, badge, size = "md", className }: Props) {
   const px = PX[size];
 

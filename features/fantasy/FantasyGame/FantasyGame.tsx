@@ -187,7 +187,6 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
 
   return (
     <div className={styles.wrap}>
-      {/* --- scoreboard --- */}
       <motion.section
         className={styles.scoreboard}
         initial={{ opacity: 0, y: 12 }}
@@ -219,7 +218,6 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
         </div>
       </motion.section>
 
-      {/* --- group winners --- */}
       <section className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>{t.fantasy.groupWinners}</h2>
@@ -271,7 +269,6 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
         </div>
       </section>
 
-      {/* --- knockout / playoff winners --- */}
       {knockoutRounds.length > 0 && (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
@@ -306,7 +303,6 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
         </section>
       )}
 
-      {/* --- summary / reset --- */}
       <section className={styles.summary}>
         <div className={styles.summaryText}>
           <strong>{store.name ? `${store.name}, ` : ""}</strong>

@@ -7,7 +7,6 @@ interface Props {
   className?: string;
 }
 
-/** Recent W/D/L form, most recent last. */
 export function FormPills({ form, className }: Props) {
   if (!form.length) {
     return <span className={cn(styles.empty, className)}>—</span>;

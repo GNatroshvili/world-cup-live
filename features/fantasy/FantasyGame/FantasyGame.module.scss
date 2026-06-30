@@ -12,7 +12,6 @@
   gap: var(--space-4);
 }
 
-// --- scoreboard -------------------------------------------------------------
 .scoreboard {
   display: flex;
   flex-wrap: wrap;
@@ -91,7 +90,6 @@
   }
 }
 
-// --- sections ---------------------------------------------------------------
 .section {
   display: flex;
   flex-direction: column;
@@ -116,7 +114,6 @@
   color: var(--text-dim);
 }
 
-// --- podium -----------------------------------------------------------------
 .podium {
   display: grid;
   grid-template-columns: 1fr;
@@ -170,7 +167,6 @@
   }
 }
 
-// --- groups -----------------------------------------------------------------
 .groups {
   display: grid;
   grid-template-columns: 1fr;
@@ -261,7 +257,6 @@
   color: var(--win);
 }
 
-// --- knockout / playoff -----------------------------------------------------
 .koRounds {
   display: grid;
   grid-template-columns: 1fr;
@@ -284,7 +279,6 @@
   margin-bottom: var(--space-3);
 }
 
-// Final / Third-Place play-off get a gold accent.
 .koRoundFeature {
   .koRoundTitle {
     @include gradient-text(var(--gradient-gold));
@@ -387,7 +381,6 @@
   color: var(--text-dim);
 }
 
-// --- status dots ------------------------------------------------------------
 .statusDot {
   display: inline-grid;
   place-items: center;
@@ -417,7 +410,6 @@
   }
 }
 
-// --- summary ----------------------------------------------------------------
 .summary {
   display: flex;
   align-items: center;

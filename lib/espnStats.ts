@@ -1,6 +1,3 @@
-// Match-detail parsing and tournament-wide player/team stat aggregation,
-// built from ESPN's per-match summary endpoint (goal timeline + team stats).
-
 import { fetchEspnSummary } from "@/services/espn";
 import type { EspnKeyEvent, EspnSummary } from "@/types/espn";
 import type {
@@ -18,7 +15,6 @@ import type {
   TeamStatRow,
 } from "@/types";
 
-// --- helpers -----------------------------------------------------------------
 function num(v: string | number | undefined): number | null {
   if (v == null) return null;
   const n = typeof v === "number" ? v : parseFloat(v);
@@ -34,11 +30,6 @@ function stat(
   return num(s.value ?? s.displayValue);
 }
 
-/**
- * Classify a key event. Goals are detected via the `scoringPlay` flag — NOT by
- * exact text — so every variant counts (e.g. "Goal - Header", "Goal - Volley",
- * "Goal - Free Kick"). Matching exact strings previously dropped such goals.
- */
 function classifyEvent(e: EspnKeyEvent): MatchEventType | null {
   if (e.scoringPlay) {
     const t = (e.type?.text ?? "").toLowerCase();
@@ -60,7 +51,6 @@ function classifyEvent(e: EspnKeyEvent): MatchEventType | null {
 
 const isGoalType = (t: MatchEventType) => t === "goal" || t === "penalty" || t === "own";
 
-/** Sort key for a clock string like "45+2'" → 4502. */
 function minuteKey(clock: string | undefined): number {
   if (!clock) return 0;
   const base = parseInt(clock, 10) || 0;
@@ -94,7 +84,6 @@ function teamStatsFrom(
   };
 }
 
-// --- single match detail (used by the match modal) --------------------------
 export function parseMatchSummary(summary: EspnSummary): MatchDetail {
   const { homeId, awayId } = homeAwayIds(summary);
 
@@ -128,7 +117,6 @@ export function parseMatchSummary(summary: EspnSummary): MatchDetail {
   };
 }
 
-// --- concurrency-limited map -------------------------------------------------
 async function mapLimit<T, R>(
   items: T[],
   limit: number,
@@ -146,7 +134,6 @@ async function mapLimit<T, R>(
   return results;
 }
 
-// --- single team's season stats (used by the team page) ---------------------
 export async function buildTeamSeasonStats(
   teamId: string,
   matches: Match[],
@@ -211,7 +198,6 @@ export async function buildTeamSeasonStats(
   };
 }
 
-// --- tournament-wide aggregation --------------------------------------------
 interface ScorerAcc {
   player: string;
   teamId: string;
@@ -267,19 +253,16 @@ export async function aggregateDetailedStats(
     sampledMatches++;
     const { summary } = entry;
 
-    // goals + assists from key events
     for (const e of summary.keyEvents ?? []) {
       const type = classifyEvent(e);
       if (!type || !isGoalType(type)) continue;
       const teamId = e.team?.id ?? "";
       const scorer = e.participants?.[0]?.athlete?.displayName;
-      // Own goals don't count for the scorer.
       if (scorer && type !== "own" && teamId) bump(scorers, scorer, teamId);
       const assister = e.participants?.[1]?.athlete?.displayName;
       if (assister && type === "goal" && teamId) bump(assists, assister, teamId);
     }
 
-    // team stats from boxscore
     const { homeId, awayId } = homeAwayIds(summary);
     for (const bt of summary.boxscore?.teams ?? []) {
       const id = bt.team?.id;
@@ -306,7 +289,6 @@ export async function aggregateDetailedStats(
         acc.possessionSum += s.possession;
         acc.possessionCount += 1;
       }
-      // goals for, from the match scoreline
       const m = entry.match;
       if (id === homeId) acc.goalsFor += m.homeScore ?? 0;
       else if (id === awayId) acc.goalsFor += m.awayScore ?? 0;
