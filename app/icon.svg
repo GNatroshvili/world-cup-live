@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00e08a"/>
+      <stop offset="1" stop-color="#16c8ff"/>
+    </linearGradient>
+    <radialGradient id="gloss" cx="0.5" cy="0.12" r="0.95">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="ball"><circle cx="256" cy="256" r="176"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#tile)"/>
+  <rect width="512" height="512" rx="116" fill="url(#gloss)"/>
+  <circle cx="256" cy="256" r="176" fill="#ffffff"/>
+  <g clip-path="url(#ball)" fill="#0a1626">
+    <path d="M256,190L318.77,235.6L294.79,309.4L217.21,309.4L193.23,235.6Z"/>
+    <path d="M377.08,89.34L397.43,151.95L344.17,190.65L290.91,151.95L311.25,89.34Z"/>
+    <path d="M451.92,319.66L398.66,358.35L345.4,319.66L365.74,257.05L431.57,257.05Z"/>
+    <path d="M256,462L202.74,423.3L223.08,360.7L288.92,360.7L309.26,423.3Z"/>
+    <path d="M60.08,319.66L80.43,257.05L146.26,257.05L166.6,319.66L113.34,358.35Z"/>
+    <path d="M134.92,89.34L200.75,89.34L221.09,151.95L167.83,190.65L114.57,151.95Z"/>
+  </g>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#0a1626" stroke-opacity="0.18" stroke-width="6"/>
+</svg>
