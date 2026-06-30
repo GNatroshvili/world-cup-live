@@ -54,3 +54,17 @@ export function translateCountry(
   if (!name) return name;
   return (t.countryNames as Record<string, string>)[name] ?? name;
 }
+
+/**
+ * Translate a team's 3-letter short code (TeamRef.shortName, e.g. "GER")
+ * into the active locale's abbreviation. Falls back to the original code.
+ */
+export function translateShortName(
+  code: string | null | undefined,
+  t: Dict,
+): string {
+  if (!code) return code ?? "";
+  return (
+    (t.shortCountryNames as Record<string, string>)[code.toUpperCase()] ?? code
+  );
+}

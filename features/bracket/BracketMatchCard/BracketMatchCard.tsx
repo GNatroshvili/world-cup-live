@@ -2,6 +2,8 @@
 
 import { useUIStore } from "@/store/uiStore";
 import { TeamBadge } from "@/components/ui/TeamBadge/TeamBadge";
+import { useT } from "@/components/providers/I18nProvider";
+import { translateShortName } from "@/lib/i18n/translateData";
 import { cn } from "@/utils/cn";
 import { formatDate } from "@/utils/format";
 import type { BracketMatch, Match } from "@/types";
@@ -46,6 +48,7 @@ function Row({
   score: number | null;
   winner: boolean;
 }) {
+  const t = useT();
   return (
     <div className={cn(styles.row, winner && styles.winner)}>
       <span className={styles.rowTeam}>
@@ -54,7 +57,9 @@ function Row({
         ) : (
           <span className={styles.dot} aria-hidden />
         )}
-        <span className={styles.label}>{team ? team.shortName : label}</span>
+        <span className={styles.label}>
+          {team ? translateShortName(team.shortName, t) : label}
+        </span>
       </span>
       <span className={styles.score}>{score ?? ""}</span>
     </div>
