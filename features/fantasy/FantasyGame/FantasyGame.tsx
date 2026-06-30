@@ -5,6 +5,11 @@ import { motion } from "framer-motion";
 import { useFantasyStore } from "@/store/fantasyStore";
 import { useT } from "@/components/providers/I18nProvider";
 import {
+  translateCountry,
+  translateRound,
+  translateShortName,
+} from "@/lib/i18n/translateData";
+import {
   KNOCKOUT_POINTS,
   POINTS,
   scoreFantasy,
@@ -71,6 +76,7 @@ function KnockoutSide({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const t = useT();
   return (
     <button
       type="button"
@@ -81,14 +87,16 @@ function KnockoutSide({
         selected && styles.koSelected,
       )}
       onClick={onSelect}
-      title={team ? team.name : label}
+      title={team ? translateCountry(team.name, t) ?? team.name : label}
     >
       {team ? (
         <TeamBadge name={team.name} code={team.shortName} badge={team.badge} size="xs" />
       ) : (
         <span className={styles.koSlotDot} aria-hidden />
       )}
-      <span className={styles.koLabel}>{team ? team.shortName : label}</span>
+      <span className={styles.koLabel}>
+        {team ? translateShortName(team.shortName, t) : label}
+      </span>
     </button>
   );
 }
@@ -157,7 +165,7 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
     const pick = store.knockoutWinners[finalFx.matchId];
     if (!pick) return null;
     const side = pick === "home" ? finalFx.home : finalFx.away;
-    return side ? side.name : t.fantasy.pickChampion;
+    return side ? translateCountry(side.name, t) ?? side.name : t.fantasy.pickChampion;
   }, [knockoutRounds, store.knockoutWinners, t]);
 
   const knockoutHint = t.fantasy.knockoutHint
@@ -249,7 +257,9 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
                           badge={team.badge}
                           size="xs"
                         />
-                        <span className={styles.chipName}>{team.name}</span>
+                        <span className={styles.chipName}>
+                          {translateCountry(team.name, t) ?? team.name}
+                        </span>
                         {isActual && <span className={styles.actualTag}>{t.fantasy.winner}</span>}
                       </button>
                     );
@@ -278,7 +288,7 @@ export function FantasyGame({ groups, knockoutRounds, actuals }: Props) {
                     styles.koRoundFeature,
                 )}
               >
-                <h3 className={styles.koRoundTitle}>{round.title}</h3>
+                <h3 className={styles.koRoundTitle}>{translateRound(round.title, t)}</h3>
                 <div className={styles.koList}>
                   {round.matches.map((fx) => (
                     <KnockoutPick
