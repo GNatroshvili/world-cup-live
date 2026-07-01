@@ -1,4 +1,10 @@
+// Builds the full TournamentData from ESPN's public API.
+// ESPN provides real standings (12 groups), all 48 teams, and the complete
+// fixture list with live scores and the knockout bracket — so everything here
+// is real data, with standings/stats taken straight from the source.
+
 import {
+  fetchEspnMatchNumbers,
   fetchEspnSchedule,
   fetchEspnStandings,
   fetchEspnTeams,
@@ -26,6 +32,7 @@ import type {
   TournamentData,
 } from "@/types";
 
+// --- small helpers -----------------------------------------------------------
 const logoOf = (t: EspnTeamLite): string | null =>
   t.logo ?? t.logos?.[0]?.href ?? null;
 
@@ -60,6 +67,24 @@ const STAGE_LABEL: Record<KnockoutStage, string> = {
 
 const KNOCKOUT_ORDER: KnockoutStage[] = ["r32", "r16", "qf", "sf", "third", "final"];
 
+/**
+ * Vertical card order for each bracket column, by FIFA match number. The bracket
+ * view pairs adjacent cards (1st+2nd, 3rd+4th, …) into the match they feed in
+ * the next column, so the columns must follow the tree — NOT kickoff order, which
+ * scrambles the pairings. This is the fixed FIFA 2026 knockout tree: e.g. the
+ * winners of matches 74 & 77 meet in R16 (M89), whose winner meets the winner of
+ * M90 (73 & 75) in the quarter-final (M97), and so on up to the final (M104).
+ */
+const BRACKET_ORDER: Record<KnockoutStage, number[]> = {
+  r32: [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87],
+  r16: [89, 90, 93, 94, 91, 92, 95, 96],
+  qf: [97, 98, 99, 100],
+  sf: [101, 102],
+  third: [103],
+  final: [104],
+};
+
+/** Map a knockout fixture date to its round (fallback when counts are partial). */
 function knockoutStageFromDate(iso: string): KnockoutStage {
   const d = dayOf(iso);
   if (d <= "2026-07-03") return "r32";
@@ -67,9 +92,15 @@ function knockoutStageFromDate(iso: string): KnockoutStage {
   if (d <= "2026-07-12") return "qf";
   if (d === "2026-07-18") return "third";
   if (d >= "2026-07-19") return "final";
-  return "sf";
+  return "sf"; // 14–15 Jul (and any remaining)
 }
 
+/**
+ * Is this a group-stage match? Date alone is unreliable at the group/knockout
+ * boundary: late-night Americas group games kick off after midnight UTC (e.g.
+ * Argentina–Jordan at 2026-06-28T02:00Z). A match between two real teams in the
+ * SAME group is always a group match.
+ */
 function isGroupMatch(
   home: TeamRef | null,
   away: TeamRef | null,
@@ -84,6 +115,7 @@ function isGroupMatch(
   return false;
 }
 
+// The fixed knockout bracket shape, in chronological order.
 const KNOCKOUT_PLAN: [KnockoutStage, number][] = [
   ["r32", 16],
   ["r16", 8],
@@ -93,6 +125,12 @@ const KNOCKOUT_PLAN: [KnockoutStage, number][] = [
   ["final", 1],
 ];
 
+/**
+ * Assign each knockout fixture to its round by COUNT over the date-sorted list,
+ * not by date thresholds — immune to UTC midnight rollover (a 3 Jul R32 game
+ * that kicks off 4 Jul UTC stays in R32). Falls back to date when the full
+ * 32-match slate isn't present yet.
+ */
 function assignKnockoutStages(
   items: { id: string; date: string }[],
 ): Map<string, KnockoutStage> {
@@ -132,9 +170,11 @@ function competitorRef(
       label: t.abbreviation,
     };
   }
+  // Undetermined knockout slot (e.g. "Group A 2nd Place" / "2A").
   return { ref: null, label: t.abbreviation || t.displayName };
 }
 
+/** Most-recent-first W/D/L form per team id, from finished matches. */
 function formByTeam(matches: Match[]): Map<string, MatchResult[]> {
   const map = new Map<string, MatchResult[]>();
   const push = (id: string, r: MatchResult) => {
@@ -144,7 +184,7 @@ function formByTeam(matches: Match[]): Map<string, MatchResult[]> {
   };
   const finished = matches
     .filter((m) => m.status === "finished" && m.home && m.away)
-    .sort((a, b) => (b.kickoff ?? "").localeCompare(a.kickoff ?? ""));
+    .sort((a, b) => (b.kickoff ?? "").localeCompare(a.kickoff ?? "")); // newest first
   for (const m of finished) {
     const hs = m.homeScore ?? 0;
     const as = m.awayScore ?? 0;
@@ -153,6 +193,7 @@ function formByTeam(matches: Match[]): Map<string, MatchResult[]> {
     push(m.home!.id, hr);
     push(m.away!.id, ar);
   }
+  // cap to last 5
   for (const [id, arr] of map) map.set(id, arr.slice(0, 5));
   return map;
 }
@@ -164,12 +205,14 @@ export async function buildFromEspn(): Promise<TournamentData> {
     fetchEspnSchedule(),
   ]);
 
+  // --- team id → group letter (from standings) ------------------------------
   const groupByTeamId = new Map<string, GroupId>();
   for (const g of standings.children) {
     const letter = groupLetter(g.name);
     for (const e of g.standings.entries) groupByTeamId.set(e.team.id, letter);
   }
 
+  // --- teams ----------------------------------------------------------------
   const rawTeams = teamsRes.sports?.[0]?.leagues?.[0]?.teams ?? [];
   const realIds = new Set(rawTeams.map((t) => t.team.id));
   const teams: Team[] = rawTeams.map(({ team: t }) => ({
@@ -195,6 +238,8 @@ export async function buildFromEspn(): Promise<TournamentData> {
   const teamsById: Record<string, Team> = {};
   for (const t of teams) teamsById[t.id] = t;
 
+  // --- matches (two phases) -------------------------------------------------
+  // Phase 1: normalize events and mark each as group or knockout.
   interface Pre {
     ev: EspnEvent;
     home: TeamRef | null;
@@ -240,6 +285,7 @@ export async function buildFromEspn(): Promise<TournamentData> {
     })
     .filter((p): p is Pre => p !== null);
 
+  // Phase 2: assign knockout rounds by count (UTC-rollover safe).
   const koStage = assignKnockoutStages(
     pre.filter((p) => !p.isGroup).map((p) => ({ id: p.ev.id, date: p.ev.date })),
   );
@@ -275,6 +321,7 @@ export async function buildFromEspn(): Promise<TournamentData> {
 
   const form = formByTeam(matches);
 
+  // --- groups + standings (straight from ESPN) ------------------------------
   const stat = (entry: { stats: { name: string; value: number }[] }, name: string) =>
     entry.stats.find((s) => s.name === name)?.value ?? 0;
 
@@ -307,6 +354,7 @@ export async function buildFromEspn(): Promise<TournamentData> {
         b.points - a.points ||
         b.goalDifference - a.goalDifference,
     );
+    // Re-number positions if ESPN omitted ranks (pre-tournament).
     tableEntries.forEach((s, i) => {
       if (!s.position) s.position = i + 1;
     });
@@ -319,10 +367,28 @@ export async function buildFromEspn(): Promise<TournamentData> {
     };
   });
 
+  // --- bracket (real teams/labels by stage) ---------------------------------
+  // Fetch FIFA match numbers for the knockout matches so we can lay each column
+  // out along the tree instead of by kickoff time (which mis-pairs the cards).
+  const koMatchIds = matches.filter((m) => m.stage !== "group").map((m) => m.id);
+  const matchNumberById = await fetchEspnMatchNumbers(koMatchIds);
+
+  /** Sort key that follows the bracket tree, falling back to kickoff order. */
+  const bracketRank = (stage: KnockoutStage, id: string, kickoff: string | null) => {
+    const mn = matchNumberById.get(id);
+    const i = mn != null ? BRACKET_ORDER[stage].indexOf(mn) : -1;
+    // Known slots come first, in tree order; unknown ones keep kickoff order.
+    return i >= 0 ? `0:${String(i).padStart(3, "0")}` : `1:${kickoff ?? ""}`;
+  };
+
   const rounds: BracketRound[] = KNOCKOUT_ORDER.map((stage) => {
     const roundMatches = matches
       .filter((m) => m.stage === stage)
-      .sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""));
+      .sort((a, b) =>
+        bracketRank(stage, a.id, a.kickoff).localeCompare(
+          bracketRank(stage, b.id, b.kickoff),
+        ),
+      );
     const bracketMatches: BracketMatch[] = roundMatches.map((m) => ({
       id: m.id,
       stage: stage,
@@ -342,6 +408,7 @@ export async function buildFromEspn(): Promise<TournamentData> {
 
   const bracket: Bracket = { rounds };
 
+  // --- statistics -----------------------------------------------------------
   const teamRefs: TeamRef[] = teams.map((t) => ({
     id: t.id,
     name: t.name,
